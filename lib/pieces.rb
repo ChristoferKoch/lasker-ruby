@@ -1,4 +1,6 @@
 class Piece
+  include Spacing
+  
   # Useful for debugging
   def display_bitboard(bitboard)
     bitboard = convert_to_64(bitboard)
@@ -7,12 +9,12 @@ class Piece
 
     while rank > 0
       spaced_line = line_spacing(bitboard[index, 8])
-      puts "#{rank} #{spaced_line}"
+      puts "#{rank}  #{spaced_line}"
       index += 8
       rank -= 1
     end
 
-    puts "  abcdefgh"
+    puts "\n   a b c d e f g h"
   end
 
   # Create a string to give the binary
