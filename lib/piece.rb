@@ -1,9 +1,15 @@
 class Piece
   include Spacing
+  attr_accessor :color, :bitboard
+
+  def initialize(color)
+    @color = color
+  end
   
   # Useful for debugging
-  def display_bitboard(bitboard)
-    bitboard = convert_to_64(bitboard)
+  def display_bitboard
+    puts "#{@bitboard}"
+    bitboard = convert_to_64(@bitboard)
     index = 0
     rank = 8
 
