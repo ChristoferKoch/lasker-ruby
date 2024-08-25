@@ -8,6 +8,6 @@ require_relative './lib/pieces/queen.rb'
 require_relative './lib/pieces/king.rb'
 
 pawn = King.new('black')
-p pawn
 
-pawn.display_bitboard
+pawn.display_bitboard(pawn.bitboard)
+pawn.display_bitboard(pawn.attackboard)
