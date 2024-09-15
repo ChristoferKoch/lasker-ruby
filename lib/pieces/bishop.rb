@@ -29,7 +29,6 @@ class Bishop < Piece
         end
         
       end
-      p attacks.to_s(2)
     end
     return attacks
   end
