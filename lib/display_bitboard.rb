@@ -45,13 +45,13 @@ module DisplayBitboard
   end
   
   # Add spacing to make display easier to read
-  def line_spacing(unspaced_string)
+  def line_spacing(unspaced_string, space = true)
     string_arr = unspaced_string.split('')
     count = string_arr.count
     i = 1
 
     while i < count do
-      string_arr.insert(i, ' ')
+      space ? string_arr.insert(i, ' ') : string_arr.insert(i, ' | ')
       i += 2
       count += 1
     end

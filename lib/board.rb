@@ -34,7 +34,42 @@ class Board
     @black_occupancy |= @black_king.bitboard
   end
 
-  def display_game_board
+  def display_gameboard
+    @gameboard = Array.new(64, ' ')
+    place_tokens(@white_pawns)
+    place_tokens(@black_pawns)
+    place_tokens(@white_knights)
+    place_tokens(@black_knights)
+    place_tokens(@white_bishops)
+    place_tokens(@black_bishops)
+    place_tokens(@white_rooks)
+    place_tokens(@black_rooks)
+    place_tokens(@white_queen)
+    place_tokens(@black_queen)
+    place_tokens(@white_king)
+    place_tokens(@black_king)
+    print_gameboard
+  end
+
+  def place_tokens(pieces)
+    indicies = pieces.get_indicies
+    indicies.each { |piece| @gameboard[piece] = pieces.token}
+  end
+
+  def print_gameboard
+    index = 56
+    rank = 8
+
+    puts "   +---+---+---+---+---+---+---+---+"
     
+    while rank > 0
+      line = line_spacing(@gameboard[index, 8].reverse.join, false)
+      puts "#{rank}  | #{line} |"
+      puts "   +---+---+---+---+---+---+---+---+"
+      index -= 8
+      rank -= 1
+    end
+
+    puts "\n     a   b   c   d   e   f   g   h"
   end
 end
