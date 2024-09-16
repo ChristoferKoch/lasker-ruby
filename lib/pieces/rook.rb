@@ -2,8 +2,10 @@ class Rook < Piece
   def initialize(color)
     if color == "white"
       @bitboard = 0b10000001
+      @token = "\u2656"
     else
       @bitboard = 0b1000000100000000000000000000000000000000000000000000000000000000
+      @token = "\u265C"
     end
     super
   end

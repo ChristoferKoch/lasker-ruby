@@ -1,7 +1,7 @@
 class Board
   include DisplayBitboard
 
-  attr_accessor :white_pawns, :black_pawns, :white_knights, :black_knights, :white_bishops, :black_bishops, :white_rooks, :black_rooks, :white_queen, :black_queen, :white_king, :black_king, :white_occupancy, :black_occpancy
+  attr_reader :white_pawns, :black_pawns, :white_knights, :black_knights, :white_bishops, :black_bishops, :white_rooks, :black_rooks, :white_queen, :black_queen, :white_king, :black_king, :white_occupancy, :black_occpancy
 
   def initialize
     @white_pawns = Pawn.new('white')
@@ -32,5 +32,9 @@ class Board
     @black_occupancy |= @black_rooks.bitboard
     @black_occupancy |= @black_queen.bitboard
     @black_occupancy |= @black_king.bitboard
+  end
+
+  def display_game_board
+    
   end
 end

@@ -2,8 +2,10 @@ class Queen < Piece
   def initialize(color)
     if color == "white"
       @bitboard = 0b00010000
+      @token = "\u2655"
     else
       @bitboard = 0b0001000000000000000000000000000000000000000000000000000000000000
+      @token = "\u265B"
     end
     super
   end

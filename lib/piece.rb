@@ -1,7 +1,8 @@
 class Piece
   include DisplayBitboard
-  
-  attr_accessor :color, :bitboard, :attackboard
+
+  attr_accessor :bitboard
+  attr_reader :color, :attackboard, :token
 
   NOT_A_FILE = 0b0111111101111111011111110111111101111111011111110111111101111111
   NOT_H_FILE = 0b1111111011111110111111101111111011111110111111101111111011111110

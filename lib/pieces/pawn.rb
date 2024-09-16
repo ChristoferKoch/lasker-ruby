@@ -5,8 +5,10 @@ class Pawn < Piece
   def initialize(color)
     if color == "white"
       @bitboard = 0b1111111100000000
+      @token = "\u2659"
     else
       @bitboard = 0b11111111000000000000000000000000000000000000000000000000
+      @token = "\u265F"
     end
     super
   end

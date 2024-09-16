@@ -2,8 +2,10 @@ class Bishop < Piece
   def initialize(color)
     if color == "white"
       @bitboard = 0b00100100
+      @token = "\u2657"
     else
       @bitboard = 0b0010010000000000000000000000000000000000000000000000000000000000
+      @token = "\u265D"
     end
     super
   end
