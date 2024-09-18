@@ -1,59 +1,51 @@
 class Board
   include DisplayBitboard
 
-  attr_reader :white_pawns, :black_pawns, :white_knights, :black_knights, :white_bishops, :black_bishops, :white_rooks, :black_rooks, :white_queen, :black_queen, :white_king, :black_king, :white_occupancy, :black_occpancy
+  attr_reader :pieces, :white_occupancy, :black_occpancy
+
+  #:white_pawns, :black_pawns, :white_knights, :black_knights, :white_bishops, :black_bishops, :white_rooks, :black_rooks, :white_queen, :black_queen, :white_king, :black_king
 
   def initialize
-    @white_pawns = Pawn.new('white')
-    @black_pawns = Pawn.new('black')
-    @white_knights = Knight.new('white')
-    @black_knights = Knight.new('black')
-    @white_bishops = Bishop.new('white')
-    @black_bishops = Bishop.new('black')
-    @white_rooks = Rook.new('white')
-    @black_rooks = Rook.new('black')
-    @white_queen = Queen.new('white')
-    @black_queen = Queen.new('black')
-    @white_king = King.new('white')
-    @black_king = King.new('black')
+    @pieces = set_board
     occupancy
   end
 
+  def set_board
+    white_pieces = []
+    black_pieces = []
+    white_pieces << white_pawns = Pawn.new('white')
+    black_pieces << black_pawns = Pawn.new('black')
+    white_pieces << white_knights = Knight.new('white')
+    black_pieces << black_knights = Knight.new('black')
+    white_pieces << white_bishops = Bishop.new('white')
+    black_pieces << black_bishops = Bishop.new('black')
+    white_pieces << white_rooks = Rook.new('white')
+    black_pieces << black_rooks = Rook.new('black')
+    white_pieces << white_queen = Queen.new('white')
+    black_pieces << black_queen = Queen.new('black')
+    white_pieces << white_king = King.new('white')
+    black_pieces << black_king = King.new('black')
+    [white_pieces, black_pieces]
+  end
+  
   def occupancy
-    @white_occupancy = @white_pawns.bitboard
-    @white_occupancy |= @white_knights.bitboard
-    @white_occupancy |= @white_bishops.bitboard
-    @white_occupancy |= @white_rooks.bitboard
-    @white_occupancy |= @white_queen.bitboard
-    @white_occupancy |= @white_king.bitboard
-    @black_occupancy = @black_pawns.bitboard
-    @black_occupancy |= @black_knights.bitboard
-    @black_occupancy |= @black_bishops.bitboard
-    @black_occupancy |= @black_rooks.bitboard
-    @black_occupancy |= @black_queen.bitboard
-    @black_occupancy |= @black_king.bitboard
+    @white_occupancy = 0
+    @pieces[0].each { |piece| @white_occupancy |= piece.bitboard }
+    @black_occupancy = 0
+    @pieces[1].each { |piece| @black_occupancy |= piece.bitboard }
   end
 
   def display_gameboard
     @gameboard = Array.new(64, ' ')
-    place_tokens(@white_pawns)
-    place_tokens(@black_pawns)
-    place_tokens(@white_knights)
-    place_tokens(@black_knights)
-    place_tokens(@white_bishops)
-    place_tokens(@black_bishops)
-    place_tokens(@white_rooks)
-    place_tokens(@black_rooks)
-    place_tokens(@white_queen)
-    place_tokens(@black_queen)
-    place_tokens(@white_king)
-    place_tokens(@black_king)
+    @pieces[0].each do |pieces|
+      indicies = pieces.get_indicies
+      indicies.each { |piece| @gameboard[piece] = pieces.token }
+    end    
+    @pieces[1].each do |pieces|
+      indicies = pieces.get_indicies
+      indicies.each { |piece| @gameboard[piece] = pieces.token }
+    end
     print_gameboard
-  end
-
-  def place_tokens(pieces)
-    indicies = pieces.get_indicies
-    indicies.each { |piece| @gameboard[piece] = pieces.token }
   end
 
   def print_gameboard
