@@ -7,6 +7,7 @@ require_relative './lib/pieces/bishop.rb'
 require_relative './lib/pieces/queen.rb'
 require_relative './lib/pieces/king.rb'
 require_relative './lib/board.rb'
+require_relative './lib/game.rb'
 
-board = Board.new
-board.display_gameboard
+board = Game.new
+board.board.display_gameboard

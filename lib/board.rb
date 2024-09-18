@@ -53,7 +53,7 @@ class Board
 
   def place_tokens(pieces)
     indicies = pieces.get_indicies
-    indicies.each { |piece| @gameboard[piece] = pieces.token}
+    indicies.each { |piece| @gameboard[piece] = pieces.token }
   end
 
   def print_gameboard
