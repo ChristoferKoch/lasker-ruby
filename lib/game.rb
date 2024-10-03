@@ -1,5 +1,5 @@
 class Game
-  attr_reader :board
+  attr_reader :board, :to_move
   
   ENCODE_SQUARES = {
     h1: 0,
@@ -81,3 +81,4 @@ class Game
     @to_move = 'white'
   end
 end
+
