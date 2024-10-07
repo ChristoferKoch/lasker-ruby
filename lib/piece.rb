@@ -22,6 +22,24 @@ class Piece
     diff_blockerboard = @attackboard & diff_occupancy
     blockerboard = same_blockerboard | diff_blockerboard
     moves = blockerboard > 0 ? unblocked_moves(same_blockerboard, diff_blockerboard) : @attackboard
-    moves = king.in_check ? moves & king.chekboard : moves
+    moves = king.in_check ? moves & king.checkboard : moves
   end
+
+  def pinned?(occupancy, attackers, king_position, pieceboard)
+    attackers.each_value do |piece|
+      if piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen)
+        if piece.attackboard & king_position > 0
+          rayboard = get_ray(piece.attackboard, king_position)
+          if rayboard & pieceboard > 0
+            rayboard = get_ray(piece.attackboard, pieceboard)
+            if rayboard & occupancy == 0
+              return true
+            end
+          end
+        end
+      end
+    end
+    return false
+  end
+
 end
