@@ -40,11 +40,12 @@ class Board
     same_occupancy = color == 'white' ? @white_occupancy : @black_occupancy
     diff_occupancy = color == 'white' ? @black_occupancy : @white_occupancy
     legal_moves = []
-    pieces.each do |type, piece|
-      if type != :king && type != :pawns
-        legal_moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
+    if !pieces[:king].in_double_check
+      pieces.each do |type, piece|
+        if type != :king && type != :pawns
+          legal_moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
+        end
       end
-
     end
   end
 
