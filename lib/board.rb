@@ -6,7 +6,7 @@ class Board
   def initialize
     @pieces = set_board
     occupancy    
-    @move_list = generate_moves('black')
+    @move_list = generate_moves('white')
   end
 
   def set_board
@@ -14,13 +14,13 @@ class Board
     black_pieces = {}
     white_pieces[:pawns] = Pawn.new('white')
     black_pieces[:pawns] = Pawn.new('black')
-    white_pieces[:knights] = Knight.new('white')
+#    white_pieces[:knights] = Knight.new('white')
     black_pieces[:knights] = Knight.new('black')
     white_pieces[:bishops] = Bishop.new('white')
     black_pieces[:bishops] = Bishop.new('black')
-    white_pieces[:rooks] = Rook.new('white')
+  #  white_pieces[:rooks] = Rook.new('white')
     black_pieces[:rooks] = Rook.new('black')
-    white_pieces[:queen] = Queen.new('white')
+   # white_pieces[:queen] = Queen.new('white')
     black_pieces[:queen] = Queen.new('black')
     white_pieces[:king] = King.new('white')
     black_pieces[:king] = King.new('black')

@@ -34,6 +34,24 @@ class Rook < Piece
     return attacks
   end
 
+  # Generate moves on an otherwise empty board
+  def move_mask(board, square)
+    moves = 0
+    a_file = square != 0 ? (square + 1) % 8 : 1
+    h_file = square != 0 ? square % 8 : 1
+    i = 1
+    while i < 8
+      moves |= board << (i * 8) & COMPARISON
+      moves |= board >> (i * 8) & COMPARISON
+      moves |= a_file != 0 ? board << i & COMPARISON : moves
+      moves |= h_file != 0 ? board >> i & COMPARISON : moves
+      a_file = a_file != 0 ? (square + i + 1) % 8 : a_file
+      h_file = h_file != 0 ? (square - i) % 8 : h_file
+      i += 1
+    end
+    return moves
+  end
+
   # Get attack ray between pieces
   def get_ray(attackers, piece)
     rayboard = 0

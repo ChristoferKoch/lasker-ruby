@@ -34,8 +34,22 @@ class Bishop < Piece
     return attacks
   end
 
-  # Generate empty board moves
-  def move_mask()
+  # Generate board moves on an otherwise empty board
+  def move_mask(board, square)
+    moves = 0
+    a_file = square != 0 ? (square + 1) % 8 : 1
+    h_file = square != 0 ? square % 8 : 1
+    i = 1
+    while i < 8
+      moves |= a_file != 0 ? board << (i * 9) & COMPARISON : moves
+      moves |= a_file != 0 ? board >> (i * 7) & COMPARISON : moves
+      moves |= h_file != 0 ? board >> (i * 9) & COMPARISON : moves
+      moves |= h_file != 0 ? board << (i * 7) & COMPARISON : moves
+      a_file = a_file != 0 ? (square + i + 1) % 8 : a_file
+      h_file = h_file != 0 ? (square - i) % 8 : h_file
+      i += 1
+    end
+    return moves
   end
 
   # Get attack ray between pieces

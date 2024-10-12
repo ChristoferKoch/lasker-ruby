@@ -29,8 +29,8 @@ class King < Piece
   end
 
   def moves(same, diff, other_pieces)
-    move_board = @attackboard & ~same
-    move_board = safety(move_board, other_pieces)
+    moveboard = @attackboard & ~same
+    moveboard = safety(move_board, other_pieces)
   end
 
   def safety(board, other_pieces)
