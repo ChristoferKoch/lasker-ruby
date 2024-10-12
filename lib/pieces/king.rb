@@ -1,5 +1,5 @@
 class King < Piece
-  attr_accessor :in_check, :checkboard
+  attr_accessor :in_check, :in_double_check, :checkboard
   
   def initialize(color)
     if color == "white"
@@ -10,6 +10,7 @@ class King < Piece
       @token = "\u265A"
     end
     @in_check = false
+    @in_double_check = false
     @checkboard = 0
     super
   end

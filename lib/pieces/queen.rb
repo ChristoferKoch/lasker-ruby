@@ -37,4 +37,42 @@ class Queen < Piece
     end
     return attacks
   end
+
+  # Get attack ray between pieces
+  def get_ray(attackers, piece)
+    rayboard = 0
+    attackers.each do |attacker|
+      distance = (piece - attacker).abs
+      temp_board = 1 << piece
+      if distance % 8 == 0
+        shift = 8
+      elsif distance % 9 == 0
+        shift = 9
+      elsif distance % 7 == 0
+        shift = distance == 7 && diagonal?(attacker, piece) ? 7 : 1
+      else
+        shift = 1
+      end
+      limit = shift == 1 && distance > 8 ? 0 : distance / shift
+      i = 1
+      while i <= limit
+        rayboard |= piece > attacker ? temp_board >> (i * shift) & COMPARISON : temp_board << (i * shift) & COMPARISON
+        i += 1
+      end
+    end
+    return rayboard
+  end
+
+  # Determines if piece with distance of 7 is on the same rank or diagonal
+  # as the queen
+  def diagonal?(queen, target)
+    queen_board = 1 << queen
+    if queen > target && (queen_board & NOT_A_FILE) > 0
+      return true
+    elsif queen < target && (queen_board & NOT_H_FILE) > 0
+      return true
+    else
+      return false
+    end
+  end
 end

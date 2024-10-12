@@ -4,7 +4,7 @@ class Bishop < Piece
       @bitboard = 0b00100100
       @token = "\u2657"
     else
-      @bitboard = 0b0010010000000000000000000000000000000000000000000000000000000000
+      @bitboard = 0b00100100000000000000000000000000000000000
       @token = "\u265D"
     end
     super
@@ -29,9 +29,29 @@ class Bishop < Piece
           h_file = h_file != 0 ? (square - i) % 8 : h_file
           i += 1
         end
-        
       end
     end
     return attacks
+  end
+
+  # Generate empty board moves
+  def move_mask()
+  end
+
+  # Get attack ray between pieces
+  def get_ray(attackers, piece)
+    rayboard = 0
+    attackers.each do |attacker|
+      distance = (piece - attacker).abs
+      temp_board = 1 << piece
+      shift = distance % 7 == 0 ? 7 : 9
+      limit = distance / shift
+      i = 1
+      while i <= limit
+        rayboard |= piece > attacker ? temp_board >> (i * shift) & COMPARISON : temp_board << (i * shift) & COMPARISON
+        i += 1
+      end
+    end
+    return rayboard
   end
 end

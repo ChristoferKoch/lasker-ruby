@@ -33,4 +33,21 @@ class Rook < Piece
     end
     return attacks
   end
+
+  # Get attack ray between pieces
+  def get_ray(attackers, piece)
+    rayboard = 0
+    attackers.each do |attacker|
+      distance = (piece - attacker).abs
+      temp_board = 1 << piece
+      shift = distance % 8 == 0 ? 8 : 1
+      limit = shift == 1 && distance > 8 ? 0 : distance / shift
+      i = 1
+      while i <= limit
+        rayboard |= piece > attacker ? temp_board >> (i * shift) & COMPARISON : temp_board << (i * shift) & COMPARISON
+        i += 1
+      end
+    end
+    return rayboard
+  end
 end
