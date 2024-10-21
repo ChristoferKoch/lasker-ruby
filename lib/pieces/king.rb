@@ -1,5 +1,5 @@
 class King < Piece
-  attr_accessor :in_check, :in_double_check, :checkboard
+  attr_accessor :in_check, :in_double_check, :checkboard, :castle_permissions
   
   def initialize(color)
     if color == "white"
@@ -12,6 +12,8 @@ class King < Piece
     @in_check = false
     @in_double_check = false
     @checkboard = 0
+    # First bit is queenside, second bit is kingside
+    @castle_permissions = 0b11
     super
   end
 
@@ -31,11 +33,13 @@ class King < Piece
   def moves(same, diff, other_pieces)
     moveboard = @attackboard & ~same
     moveboard = safety(move_board, other_pieces)
+    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
   end
 
   def safety(board, other_pieces)
     other_pieces.each_value do |piece|
-      display_bitboard(piece.attackboard)
+      board ^= piece.attackboard
     end
+    return board
   end
 end

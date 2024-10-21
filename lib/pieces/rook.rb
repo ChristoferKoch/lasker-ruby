@@ -68,4 +68,25 @@ class Rook < Piece
     end
     return rayboard
   end
+
+  def unblocked_moves(board, square, blockers, same)
+    moves = 0
+    a_file = square != 0 ? (square + 1) % 8 : 1
+    h_file = square != 0 ? square % 8 : 1
+    i = 1
+    while i < 8
+      n_block = same[square + (i * 8)] != 1 && blockers[square + ((i - 1) * 8)] != 1 && !n_block ? false : true
+      s_block = same[square - (i * 8)] != 1 && blockers[square - ((i - 1) * 8)] != 1 && !s_block ? false : true
+      e_block = same[square - i] != 1 && blockers[square - (i - 1)] != 1 && !e_block ? false : true
+      w_block = same[square + i] != 1 && blockers[square + (i - 1)] != 1 && !w_block ? false : true
+      moves |= !n_block ? board << (i * 8) & COMPARISON : moves
+      moves |= !s_block ? board >> (i * 8) & COMPARISON : moves
+      moves |= a_file != 0 && !w_block ? board << i & COMPARISON : moves
+      moves |= h_file != 0 && !e_block ? board >> i & COMPARISON : moves
+      a_file = a_file != 0 ? (square + i + 1) % 8 : a_file
+      h_file = h_file != 0 ? (square - i) % 8 : h_file
+      i += 1
+    end
+    return moves
+  end
 end

@@ -14,13 +14,13 @@ class Board
     black_pieces = {}
     white_pieces[:pawns] = Pawn.new('white')
     black_pieces[:pawns] = Pawn.new('black')
-#    white_pieces[:knights] = Knight.new('white')
+    white_pieces[:knights] = Knight.new('white')
     black_pieces[:knights] = Knight.new('black')
     white_pieces[:bishops] = Bishop.new('white')
     black_pieces[:bishops] = Bishop.new('black')
-  #  white_pieces[:rooks] = Rook.new('white')
+    white_pieces[:rooks] = Rook.new('white')
     black_pieces[:rooks] = Rook.new('black')
-   # white_pieces[:queen] = Queen.new('white')
+    white_pieces[:queen] = Queen.new('white')
     black_pieces[:queen] = Queen.new('black')
     white_pieces[:king] = King.new('white')
     black_pieces[:king] = King.new('black')
@@ -42,11 +42,12 @@ class Board
     legal_moves = []
     if !pieces[:king].in_double_check
       pieces.each do |type, piece|
-        if type != :king && type != :pawns
+        if type != :king
           legal_moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
         end
       end
     end
+    moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
   end
 
   def display_gameboard

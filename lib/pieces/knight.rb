@@ -24,4 +24,20 @@ class Knight < Piece
     attacks = attacks | ((@bitboard >> 10) & NOT_AB_FILE)
     attacks = attacks | ((@bitboard >> 6) & NOT_GH_FILE)
   end
+
+  def moves(same_occupancy, diff_occupancy, opp_pieces, king)
+    moves = []
+    indicies = get_indicies
+    indicies.each do |index|
+      moveboard = move_mask(1 << index, index)
+      pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)
+      if !pin_check && king.checkboard == 0
+        blockerboard = moveboard & same_occupancy
+        moveboard = moveboard ^ blockerboard
+      elsif moveboard && king.checkboard > 0
+        moveboard = king.in_check ? 0 : pin_check | moveboard
+      end
+    end
+    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
+  end
 end

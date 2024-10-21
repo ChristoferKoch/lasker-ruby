@@ -31,12 +31,12 @@ module DisplayBitboard
   end
 
   # Get the index of each piece on a given bitboard
-  def get_indicies
-    length = @bitboard.bit_length
+  def get_indicies(bitboard = @bitboard)
+    length = bitboard.bit_length
     index = 0
     indicies = []
     while index < length
-      if @bitboard[index] & 1 == 1
+      if bitboard[index] & 1 == 1
         indicies.push(index)
       end
       index += 1

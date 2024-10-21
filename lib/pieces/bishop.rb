@@ -68,4 +68,27 @@ class Bishop < Piece
     end
     return rayboard
   end
+
+  # Adjusts moveboard to deal with blockers
+  def unblocked_moves(board, square, blockers, same)
+    moves = 0
+    a_file = square != 0 ? (square + 1) % 8 : 1
+    h_file = square != 0 ? square % 8 : 1
+    i = 1
+    while i < 8
+      nw_block = same[square + (i * 9)] != 1 && blockers[square + ((i - 1) * 9)] != 1 && !nw_block ? false : true
+      sw_block = same[square - (i * 7)] != 1 && blockers[square - ((i - 1) * 7)] != 1 && !sw_block ? false : true
+      se_block = same[square - (i * 9)] != 1 && blockers[square - ((i - 1) * 9)] != 1 && !se_block ? false : true
+      ne_block = same[square + (i * 7)] != 1 && blockers[square + ((i - 1) * 7)] != 1 && !ne_block ? false : true
+      moves |= a_file != 0 && !nw_block ? board << (i * 9) & COMPARISON : moves
+      moves |= a_file != 0 && !sw_block ? board >> (i * 7) & COMPARISON : moves
+      moves |= h_file != 0 && !se_block ? board >> (i * 9) & COMPARISON : moves
+      moves |= h_file != 0 && !ne_block ? board << (i * 7) & COMPARISON : moves
+      a_file = a_file != 0 ? (square + i + 1) % 8 : a_file
+      h_file = h_file != 0 ? (square - i) % 8 : h_file
+      i += 1
+    end
+    display_bitboard(moves)
+    return moves
+  end
 end
