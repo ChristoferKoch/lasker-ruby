@@ -39,15 +39,17 @@ class Board
     opp_pieces = color == 'white' ? @pieces[1] : @pieces[0]
     same_occupancy = color == 'white' ? @white_occupancy : @black_occupancy
     diff_occupancy = color == 'white' ? @black_occupancy : @white_occupancy
-    legal_moves = []
+    moves = []
     if !pieces[:king].in_double_check
       pieces.each do |type, piece|
         if type != :king
-          legal_moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
+          moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
         end
       end
     end
     moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
+    moves.flatten!
+    p moves
   end
 
   def display_gameboard

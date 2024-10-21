@@ -37,6 +37,7 @@ class Knight < Piece
       elsif moveboard && king.checkboard > 0
         moveboard = king.in_check ? 0 : pin_check | moveboard
       end
+      moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces)
     end
     return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
   end

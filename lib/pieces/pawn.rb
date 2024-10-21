@@ -47,8 +47,9 @@ class Pawn < Piece
           moveboard &= tempboard
         end
       end
+      moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces)
     end
-    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
+    return moves
   end
 
   def move_mask(bitboard, index)

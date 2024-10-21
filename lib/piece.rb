@@ -26,12 +26,13 @@ class Piece
         blockerboard = same_blockerboard | diff_blockerboard
         moveboard = blockerboard > 0 ? unblocked_moves(1 << index, index, blockerboard, same_blockerboard) : moveboard
         moveboard = king.in_check ? moveboard & king.checkboard : moveboard
-      elsif moveboard && king.bitboard > 0
+      elsif moveboard > 0
         moveboard |= get_ray(king.bitboard, index) ^ king.bitboard
         moveboard = king.in_check ? 0 : pin_check | moveboard
       end
+      moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces)
     end
-    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
+    return moves
   end
 
   # Determines if piece is pinned

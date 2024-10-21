@@ -31,10 +31,13 @@ class King < Piece
   end
 
   def moves(same, diff, other_pieces)
+    moves = []
     moveboard = @attackboard & ~same
     moveboard = safety(move_board, other_pieces)
-    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
-  end
+    castle = @castle_permissions > 0 ? true : false
+    moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces, castle)
+    return moves
+  end 
 
   def safety(board, other_pieces)
     other_pieces.each_value do |piece|
