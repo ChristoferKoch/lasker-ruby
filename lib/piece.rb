@@ -53,4 +53,26 @@ class Piece
     end
     return nil
   end
+
+  # Generates moves as a bit representation
+  # Standard representation:
+  # 0000 0000 0000 0000 0000 0011 1111 Origin square
+  # 0000 0000 0000 0000 1111 1100 0000 Target square
+  # 0000 0000 0000 1111 0000 0000 0000 Piece type
+  # 0000 0000 1111 0000 0000 0000 0000 Capture piece type
+  # 0000 1111 0000 0000 0000 0000 0000 Promotion piece
+  # 0001 0000 0000 0000 0000 0000 0000 En passant
+  # 0010 0000 0000 0000 0000 0000 0000 Castle
+  # 0100 0000 0000 0000 0000 0000 0000 Double push
+  # 1000 0000 0000 0000 0000 0000 0000 Check
+  def encode_moves(moveboard, index, occupancy, opponent_piece, castle = false)
+    moves = []
+    if castle
+      
+    end
+    indicies = get_indicies(moveboard)
+    indicies.each do |index|
+      display_bitboard(1 << index)
+    end
+  end
 end

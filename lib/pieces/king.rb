@@ -30,12 +30,13 @@ class King < Piece
     attacks = attacks | ((@bitboard >> 1) & Piece::NOT_H_FILE)
   end
 
-  def moves(same, diff, other_pieces)
+  def moves(same, diff, opp_pieces)
     moves = []
     moveboard = @attackboard & ~same
-    moveboard = safety(move_board, other_pieces)
+    moveboard = safety(moveboard, opp_pieces)
     castle = @castle_permissions > 0 ? true : false
-    moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces, castle)
+    index = get_indicies
+    moves += encode_moves(moveboard, index[0], diff, opp_pieces, castle)
     return moves
   end 
 

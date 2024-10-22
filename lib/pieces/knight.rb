@@ -15,14 +15,14 @@ class Knight < Piece
 
   def attack_mask
     attacks = 0
-    attacks = attacks | ((@bitboard << 15) & NOT_A_FILE)
-    attacks = attacks | ((@bitboard << 17) & NOT_H_FILE)
-    attacks = attacks | ((@bitboard << 10) & NOT_GH_FILE)
-    attacks = attacks | ((@bitboard << 6) & NOT_AB_FILE)
-    attacks = attacks | ((@bitboard >> 15) & NOT_H_FILE)
-    attacks = attacks | ((@bitboard >> 17) & NOT_A_FILE)
-    attacks = attacks | ((@bitboard >> 10) & NOT_AB_FILE)
-    attacks = attacks | ((@bitboard >> 6) & NOT_GH_FILE)
+    attacks |= ((@bitboard << 15) & NOT_A_FILE)
+    attacks |= ((@bitboard << 17) & NOT_H_FILE)
+    attacks |= ((@bitboard << 10) & NOT_GH_FILE)
+    attacks |= ((@bitboard << 6) & NOT_AB_FILE)
+    attacks |= ((@bitboard >> 15) & NOT_H_FILE)
+    attacks |= ((@bitboard >> 17) & NOT_A_FILE)
+    attacks |= ((@bitboard >> 10) & NOT_AB_FILE)
+    attacks |= ((@bitboard >> 6) & NOT_GH_FILE)
   end
 
   def moves(same_occupancy, diff_occupancy, opp_pieces, king)
@@ -39,6 +39,18 @@ class Knight < Piece
       end
       moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces)
     end
-    return encode_moves(moveboard, index, diff_occupancy, opp_pieces)
+    return moves
+  end
+
+  def move_mask(bitboard, index)
+    moves = 0
+    moves |= ((bitboard << 15) & NOT_A_FILE)
+    moves |= ((bitboard << 17) & NOT_H_FILE)
+    moves |= ((bitboard << 10) & NOT_GH_FILE)
+    moves |= ((bitboard << 6) & NOT_AB_FILE)
+    moves |= ((bitboard >> 15) & NOT_H_FILE)
+    moves |= ((bitboard >> 17) & NOT_A_FILE)
+    moves |= ((bitboard >> 10) & NOT_AB_FILE)
+    moves |= ((bitboard >> 6) & NOT_GH_FILE)
   end
 end
