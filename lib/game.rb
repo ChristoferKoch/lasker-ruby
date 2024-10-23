@@ -1,5 +1,5 @@
 class Game
-  attr_reader :board, :to_move
+  attr_reader :board, :to_move, :game_over
   
   ENCODE_SQUARES = {
     h1: 0,
@@ -79,6 +79,29 @@ class Game
   def initialize
     @board = Board.new
     @to_move = 'white'
+    @game_over = false
+  end
+
+  def game_loop
+    loop do
+      @board.display_gameboard
+      @board.move_list
+      puts "Move:"
+      move = gets
+      move = move.to_i
+      while !@board.move_list.include?(move)
+        puts "Illegal move, please try again:"
+        move = gets
+        move = move.to_i
+      end
+      @board.make_move(move)
+      @to_move = @to_move == 'white' ? 'black' : 'white'
+      @board.occupancy
+      @board.move_list = @board.generate_moves(@to_move)
+      @game_over = true if @board.move_list.length == 0
+      p @board.move_list.length
+      break
+    end
   end
 end
 

@@ -49,7 +49,7 @@ class Board
     end
     moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
     moves.flatten!
-    p moves
+    return moves
   end
 
   def display_gameboard

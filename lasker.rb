@@ -9,5 +9,19 @@ require_relative './lib/pieces/king.rb'
 require_relative './lib/board.rb'
 require_relative './lib/game.rb'
 
-board = Game.new
-board.board.display_gameboard
+game = Game.new
+game.game_loop
+loop do
+  board.board.display_gameboard
+  p board.board.move_list
+  puts "Move:"
+  move = gets
+  move = move.to_i
+  while !board.board.move_list.include?(move)
+    puts "Illegal move, please try again:"
+    move = gets
+    move = move.to_i
+  end
+  break
+end
+

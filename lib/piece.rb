@@ -86,8 +86,9 @@ class Piece
       move |= get_type(opp_pieces, 1 << target) << 15 if (1 << target) & occupancy > 0
       move |= promotion << 18 if promotion
       move |= 1 << 21 if en_passant
-      p move.to_s(2)
+      moves.push(move)
     end
+    return moves
   end
 
   def get_type(pieces, targetboard)
