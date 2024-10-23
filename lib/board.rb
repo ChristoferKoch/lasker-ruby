@@ -5,7 +5,7 @@ class Board
 
   def initialize
     @pieces = set_board
-    occupancy    
+    occupancy   
     @move_list = generate_moves('white')
   end
 

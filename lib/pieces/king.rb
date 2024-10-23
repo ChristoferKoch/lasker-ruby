@@ -42,7 +42,8 @@ class King < Piece
 
   def safety(board, other_pieces)
     other_pieces.each_value do |piece|
-      board ^= piece.attackboard
+      temp_board = board & piece.attackboard
+      board ^= temp_board
     end
     return board
   end

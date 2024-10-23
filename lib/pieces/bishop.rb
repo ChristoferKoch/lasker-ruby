@@ -88,7 +88,6 @@ class Bishop < Piece
       h_file = h_file != 0 ? (square - i) % 8 : h_file
       i += 1
     end
-    display_bitboard(moves)
     return moves
   end
 end
