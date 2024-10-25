@@ -56,7 +56,7 @@ class Pawn < Piece
         castle: nil,
         promotion: nil,
         en_passant: false        
-      })
+      }) if moveboard > 0
     end
     return moves
   end

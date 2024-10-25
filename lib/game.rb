@@ -84,8 +84,9 @@ class Game
 
   def game_loop
     loop do
+      p @board.moves.game_moves
       @board.display_gameboard
-      @board.moves.move_list
+      p @board.moves.move_list
       puts "Move:"
       move = gets
       move = move.to_i

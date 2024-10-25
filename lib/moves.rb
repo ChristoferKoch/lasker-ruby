@@ -13,7 +13,7 @@ class Moves
 
 
   def initialize(pieces, white_occupancy, black_occupancy)
-    @move_list = generate_moves('white', pieces, white_occupancy, black_occupancy)
+    generate_moves('white', pieces, white_occupancy, black_occupancy)
     @game_moves = []
   end
 
@@ -33,7 +33,7 @@ class Moves
     end
     moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
     moves.flatten!
-    return moves
+    @move_list = moves
   end
 
   # Generates moves as a bit representation

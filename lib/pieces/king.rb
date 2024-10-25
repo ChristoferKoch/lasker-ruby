@@ -45,7 +45,7 @@ class King < Piece
         castle: castle,
         promotion: nil,
         en_passant: false        
-      })
+      }) if moveboard > 0
     return moves
   end 
 
