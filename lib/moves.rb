@@ -76,35 +76,48 @@ class Moves
     return nil
   end
 
-  def get_origin_square(move)
+  def get_all(move)
+    {
+      origin: get_origin(move),
+      target: get_target(move),
+      piece: get_piece_type(move),
+      capture: get_capture_type(move),
+      promotion: get_promotion_type(move),
+      en_passant: en_passant?(move),
+      castle: castle?(move),
+      check: check?(move)
+    }
+  end
+
+  def get_origin(move)
     move[0..5]
   end
 
-  def get_target_square(move)
+  def get_target(move)
     move[6..11]
   end
 
   def get_piece_type(move)
-    move[12..14]
+    NUMERIC_CODE.key(move[12..14])
   end
 
   def get_capture_type(move)
-    move[15..17]
+    NUMERIC_CODE.key(move[15..17])
   end
 
   def get_promotion_type(move)
-    move[18..20]
+    NUMERIC_CODE.key(move[18..20])
   end
 
   def en_passant?(move)
     move[21] == 1 ? true : false
   end
 
-  def get_castle(move)
+  def castle?(move)
     move[22] == 1 ? true : false
   end
 
-  def get_check(move)
+  def check?(move)
     move[23] == 1 ? true : false
   end
 end

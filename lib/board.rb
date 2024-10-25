@@ -12,14 +12,14 @@ class Board
   def set_board
     white_pieces = {}
     black_pieces = {}
-    white_pieces[:pawns] = Pawn.new('white')
-    black_pieces[:pawns] = Pawn.new('black')
-    white_pieces[:knights] = Knight.new('white')
-    black_pieces[:knights] = Knight.new('black')
-    white_pieces[:bishops] = Bishop.new('white')
-    black_pieces[:bishops] = Bishop.new('black')
-    white_pieces[:rooks] = Rook.new('white')
-    black_pieces[:rooks] = Rook.new('black')
+    white_pieces[:pawn] = Pawn.new('white')
+    black_pieces[:pawn] = Pawn.new('black')
+    white_pieces[:knight] = Knight.new('white')
+    black_pieces[:knight] = Knight.new('black')
+    white_pieces[:bishop] = Bishop.new('white')
+    black_pieces[:bishop] = Bishop.new('black')
+    white_pieces[:rook] = Rook.new('white')
+    black_pieces[:rook] = Rook.new('black')
     white_pieces[:queen] = Queen.new('white')
     black_pieces[:queen] = Queen.new('black')
     white_pieces[:king] = King.new('white')
@@ -47,7 +47,28 @@ class Board
     print_gameboard
   end
 
-  def make_move
+  def make_move(move, to_move)
+    move_data = @moves.get_all(move)
+    pieces_index = to_move == 'white' ? 0 : 1
+    opp_index = to_move == 'white' ? 1 : 0
+    piece = @pieces[pieces_index][move_data[:piece]]
+    capture = move_data[:capture] ? @pieces[opp_index][move_data[:capture]] : nil
+    promotion = move_data[:promotion] ? @pieces[pieces_index][move_data[:promotion]] : nil
+    piece.bitboard ^= 1 << move_data[:origin]
+    piece.bitboard |= 1 << move_data[:target] unless promotion
+    if capture && !move_data[:en_passant]
+      capture.bitboard ^= 1 << move_data[:target]
+    elsif move_data[:en_passant]
+      shift = to_move == 'white' ? move_data[:target] - 8 : move_data + 8 
+      capture.bitboard ^= 1 << shift
+    end
+    promotion.bitboard |= 1 << move_data[:target] if promotion
+    @moves.game_moves.push(move)
+  end
+
+  def update(to_move)
+    occupancy
+    @moves.generate_moves(to_move, @pieces, @white_occupancy, @black_occupancy)
   end
 
   def print_gameboard

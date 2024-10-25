@@ -87,7 +87,6 @@ class Game
       @board.display_gameboard
       @board.moves.move_list
       puts "Move:"
-      p @board.moves.move_list
       move = gets
       move = move.to_i
       while !@board.moves.move_list.include?(move)
@@ -95,13 +94,13 @@ class Game
         move = gets
         move = move.to_i
       end
-      @board.make_move()
+      @board.make_move(move, @to_move)
       @to_move = @to_move == 'white' ? 'black' : 'white'
-      @board.occupancy
-      @board.moves.move_list = @board.moves.generate_moves(@to_move)
-      @game_over = true if @board.move_list.length == 0
-      p @board.moves.move_list
-      break
+      @board.update(@to_move)
+      @game_over = true if @board.moves.move_list.length == 0
+      if @game_over
+        break
+      end
     end
   end
 end

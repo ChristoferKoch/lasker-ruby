@@ -50,7 +50,7 @@ class Pawn < Piece
       moves.push({
         moveboard: moveboard,
         code_type: self.class.to_s.downcase.to_sym,
-        origin_square: index[0],
+        origin_square: index,
         occupancy: diff_occupancy,
         opp_pieces: opp_pieces,
         castle: nil,
