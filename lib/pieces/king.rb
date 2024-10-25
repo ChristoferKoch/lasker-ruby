@@ -34,9 +34,18 @@ class King < Piece
     moves = []
     moveboard = @attackboard & ~same
     moveboard = safety(moveboard, opp_pieces)
-    castle = @castle_permissions > 0 ? true : false
+    castle = @castle_permissions > 0 ? @castle_permissions : nil
     index = get_indicies
-    moves += encode_moves(moveboard, index[0], diff, opp_pieces, castle)
+    moves.push({
+        moveboard: moveboard,
+        code_type: self.class.to_s.downcase.to_sym,
+        origin_square: index[0],
+        occupancy: diff,
+        opp_pieces: opp_pieces,
+        castle: castle,
+        promotion: nil,
+        en_passant: false        
+      })
     return moves
   end 
 

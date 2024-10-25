@@ -47,7 +47,16 @@ class Pawn < Piece
           moveboard &= tempboard
         end
       end
-      moves += encode_moves(moveboard, index, diff_occupancy, opp_pieces)
+      moves.push({
+        moveboard: moveboard,
+        code_type: self.class.to_s.downcase.to_sym,
+        origin_square: index[0],
+        occupancy: diff_occupancy,
+        opp_pieces: opp_pieces,
+        castle: nil,
+        promotion: nil,
+        en_passant: false        
+      })
     end
     return moves
   end

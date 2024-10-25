@@ -1,12 +1,12 @@
 class Board
   include DisplayBitboard
 
-  attr_reader :pieces, :white_occupancy, :black_occpancy, :move_list
+  attr_reader :pieces, :white_occupancy, :black_occpancy, :moves
 
   def initialize
     @pieces = set_board
-    occupancy   
-    @move_list = generate_moves('white')
+    occupancy
+    @moves = Moves.new(@pieces, @white_occupancy, @black_occupancy)
   end
 
   def set_board
@@ -34,24 +34,6 @@ class Board
     @pieces[1].each_value { |piece| @black_occupancy |= piece.bitboard }
   end
 
-  def generate_moves(color)
-    pieces = color == 'white' ? @pieces[0] : @pieces[1]
-    opp_pieces = color == 'white' ? @pieces[1] : @pieces[0]
-    same_occupancy = color == 'white' ? @white_occupancy : @black_occupancy
-    diff_occupancy = color == 'white' ? @black_occupancy : @white_occupancy
-    moves = []
-    if !pieces[:king].in_double_check
-      pieces.each do |type, piece|
-        if type != :king
-          moves += pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
-        end
-      end
-    end
-    moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
-    moves.flatten!
-    return moves
-  end
-
   def display_gameboard
     @gameboard = Array.new(64, ' ')
     @pieces[0].each_value do |pieces|
@@ -63,6 +45,9 @@ class Board
       indicies.each { |piece| @gameboard[piece] = pieces.token }
     end
     print_gameboard
+  end
+
+  def make_move
   end
 
   def print_gameboard
