@@ -45,14 +45,14 @@ class Queen < Piece
     h_file = square != 0 ? square % 8 : 1
     i = 1
     while i < 8
-      attacks |= board << (i * 8) & COMPARISON
-      attacks |= board >> (i * 8) & COMPARISON
-      attacks |= a_file != 0 ? board << i & COMPARISON : attacks
-      attacks |= h_file != 0 ? board >> i & COMPARISON : attacks
-      attacks |= a_file != 0 ? board << (i * 9) & COMPARISON : attacks
-      attacks |= a_file != 0 ? board >> (i * 7) & COMPARISON : attacks
-      attacks |= h_file != 0 ? board >> (i * 9) & COMPARISON : attacks
-      attacks |= h_file != 0 ? board << (i * 7) & COMPARISON : attacks
+      moves |= board << (i * 8) & COMPARISON
+      moves |= board >> (i * 8) & COMPARISON
+      moves |= a_file != 0 ? board << i & COMPARISON : moves
+      moves |= h_file != 0 ? board >> i & COMPARISON : moves
+      moves |= a_file != 0 ? board << (i * 9) & COMPARISON : moves
+      moves |= a_file != 0 ? board >> (i * 7) & COMPARISON : moves
+      moves |= h_file != 0 ? board >> (i * 9) & COMPARISON : moves
+      moves |= h_file != 0 ? board << (i * 7) & COMPARISON : moves
       a_file = a_file != 0 ? (square + i + 1) % 8 : a_file
       h_file = h_file != 0 ? (square - i) % 8 : h_file
       i += 1

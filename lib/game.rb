@@ -1,6 +1,7 @@
 class Game
+  include Encode, DisplayBitboard
   attr_reader :board, :to_move, :game_over
-  
+
   ENCODE_SQUARES = {
     h1: 0,
     g1: 1,
@@ -68,12 +69,18 @@ class Game
     a8: 63
   }
 
+  RANK = Array('1'..'8')
+
+  FILE = Array('a'..'h')
+
+  CAPTURE = ['x', 'X', ':']
+
   ENCODE_PIECES = {
-    n: 'knight',
-    b: 'bishop',
-    r: 'rook',
-    q: 'queen',
-    k: 'king'
+    n: :knight,
+    b: :bishop,
+    r: :rook,
+    q: :queen,
+    k: :king
   }
   
   def initialize
@@ -84,16 +91,16 @@ class Game
 
   def game_loop
     loop do
-      p @board.moves.game_moves
+      system("clear")
       @board.display_gameboard
-      p @board.moves.move_list
       puts "Move:"
+      moves = @board.moves.move_list.map { |code| parse_integer(code) }
       move = gets
-      move = move.to_i
+      move = parse_algebraic(move)
       while !@board.moves.move_list.include?(move)
         puts "Illegal move, please try again:"
         move = gets
-        move = move.to_i
+        move = parse_algebraic(move)
       end
       @board.make_move(move, @to_move)
       @to_move = @to_move == 'white' ? 'black' : 'white'
@@ -103,6 +110,147 @@ class Game
         break
       end
     end
+  end
+  
+  def parse_algebraic(algebraic)
+    if algebraic == 'O-O' || algebraic == 'O-O-O'
+      
+    else
+      i = 0
+      current = algebraic[i]
+      data = {  }
+      data[:piece] = get_explicit_type(current)
+      i += 1 unless data[:piece] == :pawn
+      current = algebraic[i]
+      data[:disambiguate] = current if RANK.include?(current)
+      i += 1 if data[:disambiguate]
+      i += 1 if CAPTURE.include?(algebraic[i])
+      current = algebraic[i]
+      return 1 unless FILE.include?(current)
+      i += 1
+      i += 1 if CAPTURE.include?(algebraic[i])
+      data.merge!(get_user_target(algebraic, i, current))
+      return 1 if data[:error]
+      data.merge!(get_user_promotion(algebraic, data[:i])) if data[:piece] == :pawn
+      return 1 if data[:error]
+      data.merge!(get_user_origin(data[:piece], data[:disambiguate], 1 << data[:target]))
+      return 2 if data[:error]
+      data.merge!(get_user_capture(data[:target]))
+    end
+    return encode_user_move(data)
+  end
+
+  def get_explicit_type(symbol)
+    pieces = ['N', 'B', 'R', 'Q', 'K']
+    pieces.include?(symbol) ? ENCODE_PIECES[symbol.downcase.to_sym] : :pawn
+  end
+
+  def get_user_target(algebraic, i, file)
+    data = {  }
+    loop do
+      current = algebraic[i]
+      if RANK.include?(current)
+        target = file + current
+        target = ENCODE_SQUARES[target.to_sym]
+        data[:target] = target
+        data[:i] = i + 1
+        return data
+      elsif FILE.include?(current)
+        data[:disambiguate] = file
+        file = current
+        i += 1
+      else
+        data[:error] = true
+        return data
+      end
+    end
+  end
+
+  def get_user_promotion(algebraic, i)
+    data = {  }
+    loop do
+      current = algebraic[i]
+      if current != "\n"
+        if current == '='
+          data[:promotion] = get_explicit_type(algebraic[i + 1])
+          return 1 if promotion == :pawn
+          i += 2
+        elsif current == '+' || current == '#'
+          i += 1
+        else
+          data[:error] = true
+          return data
+        end
+      else
+        return data
+      end
+    end
+  end
+
+  def get_user_origin(piece, disambiguate, target)
+    data = {  }
+    index = @to_move == 'white' ? 0 : 1
+    pieceboard = @board.pieces[index][piece].bitboard
+    possible_squares = 0
+    ENCODE_SQUARES.each do |key, value|
+      possible_squares |= 1 << value if
+        !disambiguate ||
+        key.start_with?(disambiguate) ||
+        key.end_with?(disambiguate)
+    end
+    possible_squares &= pieceboard
+    if possible_squares == 0
+      data[:error] = true
+      return data
+    elsif get_indicies(possible_squares).length == 1
+      data[:origin] = get_indicies(possible_squares)[0]
+      return data
+    end
+    moves = find_possible_moves(piece, possible_squares, index)
+    possible_indicies = []
+    moves.each { |move| possible_indicies
+                   .push(move[:origin_square]) if move[:moveboard] & target > 0 }
+    if possible_indicies.length > 1
+      data[:error] = true
+    else
+      data[:origin] = possible_indicies[0]
+    end
+    return data
+  end
+
+  def get_user_capture(target)
+    data = {  }
+    compare = 1 << target
+    opp_pieces = @to_move == 'white' ? board.pieces[1] : @board.pieces[0]
+    display_bitboard(compare)
+    opp_pieces.each { |type, piece| data[:capture] = type if piece.bitboard & compare > 0 }
+    return data
+  end
+
+  def find_possible_moves(piece, squares, index)
+    opp_pieces = index == 0 ? @board.pieces[1] : @board.pieces[0]
+    board_access = @board.pieces[index]
+    same_occupancy = index == 0 ? @board.white_occupancy : @board.black_occupancy
+    diff_occupancy = index == 0 ? @board.black_occupancy : @board.white_occupancy
+    moves = board_access[piece]
+                .moves(same_occupancy, diff_occupancy, opp_pieces, board_access[:king], squares)
+    return moves
+  end
+
+  def parse_integer(numeric_code)
+    codes = get_all(numeric_code)
+    algebraic = ""
+    algebraic += ENCODE_PIECES.key(codes[:piece]).to_s.upcase unless codes[:piece] == :pawn
+    if codes[:capture]
+      algebraic += ENCODE_SQUARES.key(codes[:origin]).to_s[0] if codes[:piece] == :pawn
+      algebraic += 'x'
+    end
+    algebraic += ENCODE_SQUARES.key(codes[:target]).to_s
+    if codes[:promotion]
+      algebraic += '='
+      algebraic += ENCODE_PIECES.key(codes[:promotion]).to_s.upcase
+    end
+    return algebraic
   end
 end
 

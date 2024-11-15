@@ -25,12 +25,12 @@ class Pawn < Piece
     end
   end
 
-  def moves(same_occupancy, diff_occupancy, opp_pieces, king)
+  def moves(same_occupancy, diff_occupancy, opp_pieces, king, squares = nil)
     moves = []
-    indicies = get_indicies
+    indicies = squares ? get_indicies(squares) : get_indicies
     indicies.each do |index|
       moveboard = move_mask(1 << index, index)
-      attackboard = attack_mask(1 << index) & same_occupancy
+      attackboard = attack_mask(1 << index) & ~same_occupancy & diff_occupancy
       pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)
       if !pin_check
         blockerboard = (same_occupancy | diff_occupancy) & moveboard
@@ -68,7 +68,8 @@ class Pawn < Piece
       moves |= index > 7 && index < 16 ? (bitboard << 16) : moves
     else
       moves |= (bitboard >> 8)
-      moves |= index > 49 && index < 56 ? (bitboard >> 16) : moves
+      moves |= index > 47 && index < 56 ? (bitboard >> 16) : moves
+      moves
     end
   end
 end

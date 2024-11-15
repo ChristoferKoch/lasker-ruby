@@ -1,4 +1,14 @@
 module Encode
+  
+  NUMERIC_CODE = {
+    pawn: 1,
+    knight: 2,
+    bishop: 3,
+    rook: 4,
+    queen: 5,
+    king: 6
+  }
+    
   # Generates moves as a bit representation
   # Standard representation:
   # 0000 0000 0000 0000 0011 1111 Origin square
@@ -7,27 +17,40 @@ module Encode
   # 0000 0011 1000 0000 0000 0000 Capture piece type
   # 0001 1100 0000 0000 0000 0000 Promotion piece
   # 0010 0000 0000 0000 0000 0000 En passant
-  # 0100 0000 0000 0000 0000 0000 Castle
+  # 0100 0000 0000 0000 0000 0000 Double Push
   # 1000 0000 0000 0000 0000 0000 Check
   def encode_moves(data)
     moves = []
     data.each do |datum|
       type = NUMERIC_CODE[datum[:code_type]]
       if datum[:castle]
-      
+
       end
       indicies = get_indicies(datum[:moveboard])
       indicies.each do |target|
         move = datum[:origin_square]
         move |= target << 6
         move |= type << 12
-        move |= encode_type(datum[:opp_pieces], 1 << target) << 15 if (1 << target) & datum[:occupancy] > 0
+        move |= encode_type(datum[:opp_pieces], 1 << target) << 15 if
+          (1 << target) & datum[:occupancy] > 0
         move |= datum[:promotion] << 18 if datum[:promotion]
         move |= 1 << 21 if datum[:en_passant]
         moves.push(move)
       end
     end
     return moves
+  end
+
+  def encode_user_move(data)
+    piece = NUMERIC_CODE[data[:piece]]
+    capture = data[:capture] ? NUMERIC_CODE[data[:capture]] : 0
+    promotion = data[:promotion] ? NUMERIC_CODE[data[:promotion]] : 0
+    move = data[:origin]
+    move |= data[:target] << 6
+    move |= piece << 12
+    move |= capture << 15
+    move |= promotion << 18
+    return move
   end
 
   def encode_type(pieces, targetboard)
@@ -47,7 +70,7 @@ module Encode
       capture: get_capture_type(move),
       promotion: get_promotion_type(move),
       en_passant: en_passant?(move),
-      castle: castle?(move),
+      double_push: double_push?(move),
       check: check?(move)
     }
   end
@@ -76,7 +99,7 @@ module Encode
     move[21] == 1 ? true : false
   end
 
-  def castle?(move)
+  def double_push?(move)
     move[22] == 1 ? true : false
   end
 

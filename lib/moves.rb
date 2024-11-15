@@ -2,15 +2,6 @@ class Moves
   include DisplayBitboard, Encode
   attr_reader :move_list, :game_moves
 
-  NUMERIC_CODE = {
-    pawn: 1,
-    knight: 2,
-    bishop: 3,
-    rook: 4,
-    queen: 5,
-    king: 6
-  }
-
   def initialize(pieces, white_occupancy, black_occupancy)
     generate_moves('white', pieces, white_occupancy, black_occupancy)
     @game_moves = []
@@ -30,7 +21,8 @@ class Moves
         end
       end
     end
-    moves += pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
+    data = pieces[:king].moves(same_occupancy, diff_occupancy, opp_pieces)
+    moves += encode_moves(data)
     moves.flatten!
     @move_list = moves
   end

@@ -14,9 +14,9 @@ class Piece
   end
 
   # Works only for sliding pieces. Knights, pawns, and kings need unique functions
-  def moves(same_occupancy, diff_occupancy, opp_pieces, king)
+  def moves(same_occupancy, diff_occupancy, opp_pieces, king, squares = nil)
     moves = []
-    indicies = get_indicies
+    indicies = squares ? get_indicies(squares) : get_indicies
     indicies.each do |index|
       moveboard = move_mask(1 << index, index)
       pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)

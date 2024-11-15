@@ -1,4 +1,5 @@
 require_relative './lib/display_bitboard.rb'
+require_relative './lib/encode.rb'
 require_relative './lib/piece.rb'
 require_relative './lib/pieces/pawn.rb'
 require_relative './lib/pieces/rook.rb'

@@ -1,50 +1,39 @@
 class Board
   include DisplayBitboard
 
-  attr_reader :pieces, :white_occupancy, :black_occpancy, :moves
+  attr_reader :pieces, :white_occupancy, :black_occupancy, :moves
 
   def initialize
-    @pieces = set_board
-    occupancy
+    @pieces = initialize_pieces
+    update_occupancy
     @moves = Moves.new(@pieces, @white_occupancy, @black_occupancy)
-  end
-
-  def set_board
-    white_pieces = {}
-    black_pieces = {}
-    white_pieces[:pawn] = Pawn.new('white')
-    black_pieces[:pawn] = Pawn.new('black')
-    white_pieces[:knight] = Knight.new('white')
-    black_pieces[:knight] = Knight.new('black')
-    white_pieces[:bishop] = Bishop.new('white')
-    black_pieces[:bishop] = Bishop.new('black')
-    white_pieces[:rook] = Rook.new('white')
-    black_pieces[:rook] = Rook.new('black')
-    white_pieces[:queen] = Queen.new('white')
-    black_pieces[:queen] = Queen.new('black')
-    white_pieces[:king] = King.new('white')
-    black_pieces[:king] = King.new('black')
-    [white_pieces, black_pieces]
-  end
-  
-  def occupancy
-    @white_occupancy = 0
-    @pieces[0].each_value { |piece| @white_occupancy |= piece.bitboard }
-    @black_occupancy = 0
-    @pieces[1].each_value { |piece| @black_occupancy |= piece.bitboard }
   end
 
   def display_gameboard
     @gameboard = Array.new(64, ' ')
-    @pieces[0].each_value do |pieces|
-      indicies = pieces.get_indicies
-      indicies.each { |piece| @gameboard[piece] = pieces.token }
-    end    
-    @pieces[1].each_value do |pieces|
-      indicies = pieces.get_indicies
-      indicies.each { |piece| @gameboard[piece] = pieces.token }
+    @pieces.each do |color_pieces|
+      color_pieces.each_value do |piece|
+        piece.get_indicies.each { |index| @gameboard[index] = piece.token }
+      end
     end
     print_gameboard
+  end
+
+  def print_gameboard
+    index = 56
+    rank = 8
+
+    puts "   +---+---+---+---+---+---+---+---+"
+
+    while rank > 0
+      line = line_spacing(@gameboard[index, 8].reverse.join, false)
+      puts "#{rank}  | #{line} |"
+      puts "   +---+---+---+---+---+---+---+---+"
+      index -= 8
+      rank -= 1
+    end
+    
+    puts "\n     a   b   c   d   e   f   g   h"
   end
 
   def make_move(move, to_move)
@@ -54,37 +43,63 @@ class Board
     piece = @pieces[pieces_index][move_data[:piece]]
     capture = move_data[:capture] ? @pieces[opp_index][move_data[:capture]] : nil
     promotion = move_data[:promotion] ? @pieces[pieces_index][move_data[:promotion]] : nil
-    piece.bitboard ^= 1 << move_data[:origin]
-    piece.bitboard |= 1 << move_data[:target] unless promotion
-    if capture && !move_data[:en_passant]
-      capture.bitboard ^= 1 << move_data[:target]
-    elsif move_data[:en_passant]
-      shift = to_move == 'white' ? move_data[:target] - 8 : move_data + 8 
-      capture.bitboard ^= 1 << shift
-    end
-    promotion.bitboard |= 1 << move_data[:target] if promotion
+
+    update_bitboard(piece, move_data)
+    update_capture(capture, move_data) if capture
+    update_promotion(promotion, move_data) if promotion
+
     @moves.game_moves.push(move)
   end
 
   def update(to_move)
-    occupancy
+    update_occupancy
     @moves.generate_moves(to_move, @pieces, @white_occupancy, @black_occupancy)
   end
+  private
 
-  def print_gameboard
-    index = 56
-    rank = 8
+  def initialize_pieces
+    white_pieces = initialize_color_pieces('white')
+    black_pieces = initialize_color_pieces('black')
+    [white_pieces, black_pieces]
+  end
 
-    puts "   +---+---+---+---+---+---+---+---+"
-    
-    while rank > 0
-      line = line_spacing(@gameboard[index, 8].reverse.join, false)
-      puts "#{rank}  | #{line} |"
-      puts "   +---+---+---+---+---+---+---+---+"
-      index -= 8
-      rank -= 1
+  def initialize_color_pieces(color)
+    {
+      pawn: Pawn.new(color),
+      knight: Knight.new(color),
+      bishop: Bishop.new(color),
+      rook: Rook.new(color),
+      queen: Queen.new(color),
+      king: King.new(color)
+    }
+  end
+
+  def update_occupancy
+    @white_occupancy = calculate_occupancy(@pieces[0])
+    @black_occupancy = calculate_occupancy(@pieces[1])
+  end
+
+  def calculate_occupancy(color_pieces)
+    occupancy = 0
+    color_pieces.each_value { |piece| occupancy |= piece.bitboard }
+    occupancy
+  end
+
+  def update_bitboard(piece, move_data)
+    piece.bitboard ^= 1 << move_data[:origin]
+    piece.bitboard |= 1 << move_data[:target]
+  end
+
+  def update_capture(capture, move_data)
+    if move_data[:en_passant]
+      shift = to_move == 'white' ? move_data[:target] - 8 : move_data[:target] + 8 
+      capture.bitboard ^= 1 << shift
+    else
+      capture.bitboard ^= 1 << move_data[:target]
     end
+  end
 
-    puts "\n     a   b   c   d   e   f   g   h"
+  def update_promotion(promotion, move_data)
+    promotion.bitboard |= 1 << move_data[:target]
   end
 end
