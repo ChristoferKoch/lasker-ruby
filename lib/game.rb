@@ -91,7 +91,7 @@ class Game
 
   def game_loop
     loop do
-      system("clear")
+      #system("clear")
       @board.display_gameboard
       puts "Move:"
       moves = @board.moves.move_list.map { |code| parse_integer(code) }
@@ -222,7 +222,6 @@ class Game
     data = {  }
     compare = 1 << target
     opp_pieces = @to_move == 'white' ? board.pieces[1] : @board.pieces[0]
-    display_bitboard(compare)
     opp_pieces.each { |type, piece| data[:capture] = type if piece.bitboard & compare > 0 }
     return data
   end

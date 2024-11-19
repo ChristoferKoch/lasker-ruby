@@ -24,7 +24,7 @@ module Encode
     data.each do |datum|
       type = NUMERIC_CODE[datum[:code_type]]
       if datum[:castle]
-
+        
       end
       indicies = get_indicies(datum[:moveboard])
       indicies.each do |target|

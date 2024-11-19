@@ -12,7 +12,7 @@ class King < Piece
     @in_check = false
     @in_double_check = false
     @checkboard = 0
-    # First bit is queenside, second bit is kingside
+    # First bit is kingside, second bit is queenside
     @castle_permissions = 0b11
     super
   end
@@ -34,7 +34,7 @@ class King < Piece
     moves = []
     moveboard = @attackboard & ~same
     moveboard = safety(moveboard, opp_pieces)
-    castle = @castle_permissions > 0 ? @castle_permissions : nil
+    moveboard &= castle_moves(same | diff, opp_pieces) if @castle_permissions > 0 && !@in_check
     index = get_indicies
     moves.push({
         moveboard: moveboard,
@@ -42,12 +42,27 @@ class King < Piece
         origin_square: index[0],
         occupancy: diff,
         opp_pieces: opp_pieces,
-        castle: castle,
         promotion: nil,
         en_passant: false        
       }) if moveboard > 0
     return moves
-  end 
+  end
+
+  def castle_moves(occupancy, opp_pieces)
+    moves = 0
+    if @castle_permissions[0] == 1
+      testboard = @bitboard >> 1 | @bitboard >> 2
+      blockboard = testboard & occupancy
+      safeboard = safety(testboard, opp_pieces) if blockboard == 0
+      moves |= @bitboard >> 2 if safeboard == testboard
+    end
+    if @castle_permissions[1] == 1
+      testboard = @bitboard << 1 | @bitboard << 2
+      blockboard = testboard & occupancy
+      safeboard = safety(testboard, opp_pieces) if blockboard == 0
+      moves |= @bitboard << 2 if safeboard == testboard
+    end
+  end
 
   def safety(board, other_pieces)
     other_pieces.each_value do |piece|
