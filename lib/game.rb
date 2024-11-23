@@ -113,12 +113,19 @@ class Game
   end
   
   def parse_algebraic(algebraic)
-    if algebraic == 'O-O' || algebraic == 'O-O-O'
-      
+    data = {  }
+    if algebraic == "O-O\n" || algebraic == "O-O-O\n"
+      data[:piece] = :king
+      if @to_move == "white"
+        data[:target] = algebraic == "O-O\n" ? 1 : 5
+        data[:origin] = 3
+      else
+        data[:target] = algebraic == "O-O\n" ? 57 : 61
+        data[:origin] = 59
+      end
     else
       i = 0
       current = algebraic[i]
-      data = {  }
       data[:piece] = get_explicit_type(current)
       i += 1 unless data[:piece] == :pawn
       current = algebraic[i]
@@ -189,7 +196,7 @@ class Game
 
   def get_user_origin(piece, disambiguate, target)
     data = {  }
-    index = @to_move == 'white' ? 0 : 1
+    index = @to_move == "white" ? 0 : 1
     pieceboard = @board.pieces[index][piece].bitboard
     possible_squares = 0
     ENCODE_SQUARES.each do |key, value|

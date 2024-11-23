@@ -33,8 +33,9 @@ class King < Piece
   def moves(same, diff, opp_pieces)
     moves = []
     moveboard = @attackboard & ~same
+    display_bitboard(moveboard)
     moveboard = safety(moveboard, opp_pieces)
-    moveboard &= castle_moves(same | diff, opp_pieces) if @castle_permissions > 0 && !@in_check
+    moveboard |= castle_moves(same | diff, opp_pieces) if @castle_permissions > 0 && !@in_check
     index = get_indicies
     moves.push({
         moveboard: moveboard,
@@ -43,8 +44,8 @@ class King < Piece
         occupancy: diff,
         opp_pieces: opp_pieces,
         promotion: nil,
-        en_passant: false        
-      }) if moveboard > 0
+        en_passant: false
+    }) if moveboard > 0
     return moves
   end
 
@@ -62,6 +63,7 @@ class King < Piece
       safeboard = safety(testboard, opp_pieces) if blockboard == 0
       moves |= @bitboard << 2 if safeboard == testboard
     end
+    return moves
   end
 
   def safety(board, other_pieces)

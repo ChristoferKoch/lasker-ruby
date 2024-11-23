@@ -43,11 +43,9 @@ class Board
     piece = @pieces[pieces_index][move_data[:piece]]
     capture = move_data[:capture] ? @pieces[opp_index][move_data[:capture]] : nil
     promotion = move_data[:promotion] ? @pieces[pieces_index][move_data[:promotion]] : nil
-
-    update_bitboard(piece, move_data)
+    update_bitboard(piece, move_data, to_move)
     update_capture(capture, move_data) if capture
     update_promotion(promotion, move_data) if promotion
-
     @moves.game_moves.push(move)
   end
 
@@ -85,9 +83,12 @@ class Board
     occupancy
   end
 
-  def update_bitboard(piece, move_data)
+  def update_bitboard(piece, move_data, to_move)
     piece.bitboard ^= 1 << move_data[:origin]
     piece.bitboard |= 1 << move_data[:target]
+    if piece.is_a?(King) && (move_data[:origin] - move_data[:target]).abs == 2
+      
+    end
   end
 
   def update_capture(capture, move_data)
