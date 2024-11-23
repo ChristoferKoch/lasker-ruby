@@ -38,8 +38,8 @@ class Board
 
   def make_move(move, to_move)
     move_data = @moves.get_all(move)
-    pieces_index = to_move == 'white' ? 0 : 1
-    opp_index = to_move == 'white' ? 1 : 0
+    pieces_index = to_move == "white" ? 0 : 1
+    opp_index = to_move == "white" ? 1 : 0
     piece = @pieces[pieces_index][move_data[:piece]]
     capture = move_data[:capture] ? @pieces[opp_index][move_data[:capture]] : nil
     promotion = move_data[:promotion] ? @pieces[pieces_index][move_data[:promotion]] : nil
@@ -56,8 +56,8 @@ class Board
   private
 
   def initialize_pieces
-    white_pieces = initialize_color_pieces('white')
-    black_pieces = initialize_color_pieces('black')
+    white_pieces = initialize_color_pieces("white")
+    black_pieces = initialize_color_pieces("black")
     [white_pieces, black_pieces]
   end
 
@@ -87,13 +87,20 @@ class Board
     piece.bitboard ^= 1 << move_data[:origin]
     piece.bitboard |= 1 << move_data[:target]
     if piece.is_a?(King) && (move_data[:origin] - move_data[:target]).abs == 2
-      p "Here"
+      rook = to_move == "white" ? @pieces[0][:rook] : @pieces[1][:rook]
+      if move_data[:origin] - move_data[:target] == 2
+        rook.bitboard ^= 1 << move_data[:target] - 1
+        rook.bitboard |= 1 << move_data[:origin] - 1
+      else
+        rook.bitboard ^= 1 << move_data[:target] + 2
+        rook.bitboard |= 1 << move_data[:origin] + 1
+      end
     end
   end
 
   def update_capture(capture, move_data)
     if move_data[:en_passant]
-      shift = to_move == 'white' ? move_data[:target] - 8 : move_data[:target] + 8 
+      shift = to_move == "white" ? move_data[:target] - 8 : move_data[:target] + 8 
       capture.bitboard ^= 1 << shift
     else
       capture.bitboard ^= 1 << move_data[:target]
