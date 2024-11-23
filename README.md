@@ -37,7 +37,7 @@ ruby lasker.rb
     - [ ] En passant
 	- [ ] Promotion
 	- [ ] Check
-	- [ ] Castling
+	- [x] Castling
   - [ ] Debugging (ongoing process)
 - [ ] Algebraic Notation Parser
   - [x] Abbreviated Algebaric Notation
