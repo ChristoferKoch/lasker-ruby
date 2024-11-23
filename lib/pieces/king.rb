@@ -33,8 +33,7 @@ class King < Piece
   def moves(same, diff, opp_pieces)
     moves = []
     moveboard = @attackboard & ~same
-    display_bitboard(moveboard)
-    moveboard = safety(moveboard, opp_pieces)
+    moveboard = safety(moveboard, opp_pieces, same | diff)
     moveboard |= castle_moves(same | diff, opp_pieces) if @castle_permissions > 0 && !@in_check
     index = get_indicies
     moves.push({
@@ -54,22 +53,30 @@ class King < Piece
     if @castle_permissions[0] == 1
       testboard = @bitboard >> 1 | @bitboard >> 2
       blockboard = testboard & occupancy
-      safeboard = safety(testboard, opp_pieces) if blockboard == 0
+      safeboard = safety(testboard, opp_pieces, occupancy) if blockboard == 0
       moves |= @bitboard >> 2 if safeboard == testboard
     end
     if @castle_permissions[1] == 1
       testboard = @bitboard << 1 | @bitboard << 2
       blockboard = testboard & occupancy
-      safeboard = safety(testboard, opp_pieces) if blockboard == 0
+      safeboard = safety(testboard, opp_pieces, occupancy) if blockboard == 0
       moves |= @bitboard << 2 if safeboard == testboard
     end
     return moves
   end
 
-  def safety(board, other_pieces)
+  def safety(board, other_pieces, occupancy)
     other_pieces.each_value do |piece|
-      temp_board = board & piece.attackboard
-      board ^= temp_board
+      tempboard = board & piece.attackboard
+      testboard = 0
+      if tempboard > 0 && (piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen))
+        indicies = get_indicies(board)
+        indicies.each do |index|
+          rayboard = piece.get_ray(piece.get_indicies, index)
+          testboard |= testboard << index if (rayboard & occupancy).bit_length == 1
+        end
+      end
+      board ^= testboard
     end
     return board
   end

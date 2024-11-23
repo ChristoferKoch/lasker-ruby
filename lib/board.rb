@@ -87,7 +87,7 @@ class Board
     piece.bitboard ^= 1 << move_data[:origin]
     piece.bitboard |= 1 << move_data[:target]
     if piece.is_a?(King) && (move_data[:origin] - move_data[:target]).abs == 2
-      
+      p "Here"
     end
   end
 

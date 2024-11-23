@@ -115,6 +115,7 @@ class Game
   def parse_algebraic(algebraic)
     data = {  }
     if algebraic == "O-O\n" || algebraic == "O-O-O\n"
+      p algebraic
       data[:piece] = :king
       if @to_move == "white"
         data[:target] = algebraic == "O-O\n" ? 1 : 5
