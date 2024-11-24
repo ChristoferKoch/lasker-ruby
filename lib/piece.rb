@@ -1,8 +1,8 @@
 class Piece
   include DisplayBitboard
 
-  attr_accessor :bitboard
-  attr_reader :color, :attackboard, :token
+  attr_accessor :bitboard, :attackboard
+  attr_reader :color, :token
 
   NOT_A_FILE = 0b0111111101111111011111110111111101111111011111110111111101111111
   NOT_H_FILE = 0b1111111011111110111111101111111011111110111111101111111011111110
@@ -27,6 +27,7 @@ class Piece
         moveboard = blockerboard > 0 ? unblocked_moves(1 << index, index, blockerboard, same_blockerboard) : moveboard
         moveboard = king.in_check ? moveboard & king.checkboard : moveboard
       elsif moveboard > 0
+        display_bitboard(moveboard)
         moveboard |= get_ray(king.bitboard, index) ^ king.bitboard
         moveboard = king.in_check ? 0 : pin_check | moveboard
       end
@@ -37,7 +38,7 @@ class Piece
         occupancy: diff_occupancy,
         opp_pieces: opp_pieces,
         castle: nil,
-        promotion: nil,
+       promotion: nil,
         en_passant: false        
       }) if moveboard > 0
     end
@@ -49,11 +50,11 @@ class Piece
     attackers.each_value do |piece|
       if piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen)
         if piece.attackboard & king.bitboard > 0
-          rayboard = get_ray(piece.get_indicies, king.get_indicies[0])
+          rayboard = piece.get_ray(piece.get_indicies, king.get_indicies[0])
           pieceboard = 1 << index
           if rayboard & pieceboard > 0
-            rayboard = get_ray(piece.bitboard, index)
-            if rayboard & occupancy == 0
+            rayboard = piece.get_ray(piece.get_indicies, index)
+            if ((rayboard & occupancy).to_s(2).count '1') == 1
               return rayboard
             end
           end

@@ -56,14 +56,16 @@ class Bishop < Piece
   def get_ray(attackers, piece)
     rayboard = 0
     attackers.each do |attacker|
-      distance = (piece - attacker).abs
-      temp_board = 1 << piece
-      shift = distance % 7 == 0 ? 7 : 9
-      limit = distance / shift
-      i = 1
-      while i <= limit
-        rayboard |= piece > attacker ? temp_board >> (i * shift) & COMPARISON : temp_board << (i * shift) & COMPARISON
-        i += 1
+      pieceboard = 1 << piece
+      if move_mask(1 << attacker, attacker) & pieceboard > 0
+        distance = (piece - attacker).abs
+        shift = distance % 7 == 0 ? 7 : 9
+        limit = distance / shift
+        i = 1
+        while i <= limit
+          rayboard |= piece > attacker ? pieceboard >> (i * shift) & COMPARISON : pieceboard << (i * shift) & COMPARISON
+          i += 1
+        end
       end
     end
     return rayboard

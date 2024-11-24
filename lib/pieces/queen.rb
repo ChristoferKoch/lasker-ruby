@@ -64,22 +64,24 @@ class Queen < Piece
   def get_ray(attackers, piece)
     rayboard = 0
     attackers.each do |attacker|
-      distance = (piece - attacker).abs
-      temp_board = 1 << piece
-      if distance % 8 == 0
-        shift = 8
-      elsif distance % 9 == 0
-        shift = 9
-      elsif distance % 7 == 0
-        shift = distance == 7 && diagonal?(attacker, piece) ? 7 : 1
-      else
-        shift = 1
-      end
-      limit = shift == 1 && distance > 8 ? 0 : distance / shift
-      i = 1
-      while i <= limit
-        rayboard |= piece > attacker ? temp_board >> (i * shift) & COMPARISON : temp_board << (i * shift) & COMPARISON
-        i += 1
+      pieceboard = 1 << piece
+      if move_mask(1 << attacker, attacker)
+        distance = (piece - attacker).abs
+        if distance % 8 == 0
+          shift = 8
+        elsif distance % 9 == 0
+          shift = 9
+        elsif distance % 7 == 0
+          shift = distance == 7 && diagonal?(attacker, piece) ? 7 : 1
+        else
+          shift = 1
+        end
+        limit = shift == 1 && distance > 8 ? 0 : distance / shift
+        i = 1
+        while i <= limit
+          rayboard |= piece > attacker ? pieceboard >> (i * shift) & COMPARISON : pieceboard << (i * shift) & COMPARISON
+          i += 1
+        end
       end
     end
     return rayboard

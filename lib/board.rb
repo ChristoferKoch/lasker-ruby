@@ -53,7 +53,7 @@ class Board
     update_occupancy
     @moves.generate_moves(to_move, @pieces, @white_occupancy, @black_occupancy)
   end
-  private
+  #private
 
   def initialize_pieces
     white_pieces = initialize_color_pieces("white")
@@ -86,6 +86,7 @@ class Board
   def update_bitboard(piece, move_data, to_move)
     piece.bitboard ^= 1 << move_data[:origin]
     piece.bitboard |= 1 << move_data[:target]
+    piece.attackboard = piece.attack_mask
     if piece.is_a?(King) && (move_data[:origin] - move_data[:target]).abs == 2
       rook = to_move == "white" ? @pieces[0][:rook] : @pieces[1][:rook]
       if move_data[:origin] - move_data[:target] == 2
@@ -95,6 +96,7 @@ class Board
         rook.bitboard ^= 1 << move_data[:target] + 2
         rook.bitboard |= 1 << move_data[:origin] + 1
       end
+      rook.attackboard = rook.attack_mask
     end
   end
 

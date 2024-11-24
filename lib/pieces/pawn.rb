@@ -46,6 +46,8 @@ class Pawn < Piece
           tempboard = @color == "white" ? 1 << (index + shift) : 1 << (index - shift)
           moveboard &= tempboard
         end
+      else
+        moveboard = 0
       end
       moves.push({
         moveboard: moveboard,
