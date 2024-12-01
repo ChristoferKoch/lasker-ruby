@@ -1,5 +1,5 @@
 class Board
-  include DisplayBitboard
+  include BitManipulations
 
   attr_reader :pieces, :white_occupancy, :black_occupancy, :moves
 

@@ -1,5 +1,5 @@
 class Moves
-  include DisplayBitboard, Encode
+  include BitManipulations, Encode
   attr_reader :move_list, :game_moves
 
   def initialize(pieces, white_occupancy, black_occupancy)

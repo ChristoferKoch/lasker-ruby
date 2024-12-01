@@ -1,5 +1,5 @@
 class Game
-  include Encode, DisplayBitboard
+  include Encode, BitManipulations
   attr_reader :board, :to_move, :game_over
 
   ENCODE_SQUARES = {

@@ -74,7 +74,7 @@ class King < Piece
         indicies.each do |index|
           rayboard = piece.get_ray(piece.get_indicies, index)
           testboard |= testboard << index if
-            ((rayboard & occupancy).to_string(2).count '1') == 1
+            count_bits(rayboard & occupancy) == 1
         end
       end
       board ^= testboard

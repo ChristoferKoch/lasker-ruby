@@ -1,5 +1,5 @@
 class Piece
-  include DisplayBitboard
+  include BitManipulations
 
   attr_accessor :bitboard, :attackboard
   attr_reader :color, :token
@@ -27,7 +27,6 @@ class Piece
         moveboard = blockerboard > 0 ? unblocked_moves(1 << index, index, blockerboard, same_blockerboard) : moveboard
         moveboard = king.in_check ? moveboard & king.checkboard : moveboard
       elsif moveboard > 0
-        display_bitboard(moveboard)
         moveboard |= get_ray(king.bitboard, index) ^ king.bitboard
         moveboard = king.in_check ? 0 : pin_check | moveboard
       end
@@ -54,7 +53,7 @@ class Piece
           pieceboard = 1 << index
           if rayboard & pieceboard > 0
             rayboard = piece.get_ray(piece.get_indicies, index)
-            if ((rayboard & occupancy).to_s(2).count '1') == 1
+            if count_bits(rayboard & occupancy) == 1
               return rayboard
             end
           end

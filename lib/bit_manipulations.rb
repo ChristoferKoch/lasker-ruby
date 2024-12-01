@@ -1,4 +1,9 @@
-module DisplayBitboard
+module BitManipulations
+  # Count number of bits set
+  def count_bits(board)
+    board.to_s(2).count '1'
+  end
+  
   # Useful for debugging
   def display_bitboard(board)
     bitboard = convert_to_64(board)

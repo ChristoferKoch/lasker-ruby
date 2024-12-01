@@ -38,13 +38,13 @@ class Pawn < Piece
         moveboard |= attackboard
         moveboard = king.in_check ? moveboard & king.checkboard : moveboard
       elsif attackboard > 0
-        king_distance = (index - king).abs
+        king_distance = (index - get_indicies(king.bitboard)[0]).abs
         if king_distance % 7 != 0 && king_distance % 9 != 0
           moveboard = 0
         else
           shift = king_distance % 7 == 0 ? 7 : 9
           tempboard = @color == "white" ? 1 << (index + shift) : 1 << (index - shift)
-          moveboard &= tempboard
+          moveboard = tempboard & attackboard
         end
       else
         moveboard = 0
