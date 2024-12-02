@@ -5,6 +5,7 @@ class Board
 
   def initialize
     @pieces = initialize_pieces
+    @piece_counts = initialize_piece_counts
     update_occupancy
     @moves = Moves.new(@pieces, @white_occupancy, @black_occupancy)
   end
@@ -44,7 +45,7 @@ class Board
     capture = move_data[:capture] ? @pieces[opp_index][move_data[:capture]] : nil
     promotion = move_data[:promotion] ? @pieces[pieces_index][move_data[:promotion]] : nil
     update_bitboard(piece, move_data, to_move)
-    update_capture(capture, move_data) if capture
+    update_capture(capture, move_data, to_move, move_data[:capture]) if capture
     update_promotion(promotion, move_data) if promotion
     update_occupancy
     move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
@@ -71,6 +72,26 @@ class Board
       queen: Queen.new(color),
       king: King.new(color)
     }
+  end
+
+  def initialize_piece_counts
+    white = {
+      pawn: 8,
+      knight: 2,
+      bishop: 2,
+      rook: 2,
+      queen: 1,
+      king: 1
+    }
+    black = {
+      pawn: 8,
+      knight: 2,
+      bishop: 2,
+      rook: 2,
+      queen: 1,
+      king: 1
+    }
+    [white, black]
   end
 
   def update_occupancy
@@ -101,13 +122,16 @@ class Board
     end
   end
 
-  def update_capture(capture, move_data)
+  def update_capture(capture, move_data, to_move, capture_type)
+    index = to_move == "white" ? 1 : 0
     if move_data[:en_passant]
       shift = to_move == "white" ? move_data[:target] - 8 : move_data[:target] + 8 
       capture.bitboard ^= 1 << shift
     else
       capture.bitboard ^= 1 << move_data[:target]
     end
+    @piece_counts[index][capture_type] -= 1
+    p @piece_counts
   end
 
   def update_promotion(promotion, move_data)

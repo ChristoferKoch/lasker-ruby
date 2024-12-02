@@ -1,6 +1,6 @@
 class Game
   include Encode, BitManipulations
-  attr_reader :board, :to_move, :game_over
+  attr_reader :board, :to_move
 
   ENCODE_SQUARES = {
     h1: 0,
@@ -86,7 +86,6 @@ class Game
   def initialize
     @board = Board.new
     @to_move = 'white'
-    @game_over = false
   end
 
   def game_loop
@@ -103,13 +102,14 @@ class Game
         move = parse_algebraic(move)
       end
       @board.make_move(move, @to_move)
+      break if game_over?
       @to_move = @to_move == 'white' ? 'black' : 'white'
       @board.update(@to_move)
-      @game_over = true if @board.moves.move_list.length == 0
-      if @game_over
-        break
-      end
     end
+  end
+
+  def game_over?
+    
   end
   
   def parse_algebraic(algebraic)
