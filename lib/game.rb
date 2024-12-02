@@ -85,7 +85,7 @@ class Game
   
   def initialize
     @board = Board.new
-    @to_move = 'white'
+    @to_move = "white"
   end
 
   def game_loop
@@ -93,7 +93,8 @@ class Game
       #system("clear")
       @board.display_gameboard
       puts "Move:"
-      moves = @board.moves.move_list.map { |code| parse_integer(code) }
+      moves = @board.moves.move_list.map { |move| parse_integer(move) }
+      p moves
       move = gets
       move = parse_algebraic(move)
       while !@board.moves.move_list.include?(move)
@@ -103,13 +104,47 @@ class Game
       end
       @board.make_move(move, @to_move)
       break if game_over?
-      @to_move = @to_move == 'white' ? 'black' : 'white'
+      @to_move = @to_move == "white" ? "black" : "white"
       @board.update(@to_move)
     end
   end
 
   def game_over?
-    
+    if @board.moves.move_list.length == 0
+      index = @to_move == "white" ? 1 : 0
+      if @board.pieces[index][:king].in_check
+        puts index == 1 ? "1-0\n\nWhite Checkmates Black" : "0-1\n\nBlack Checkmates White"
+      else
+        puts "1/2-1/2\n\nStalemate"
+      end
+    elsif insufficient_material?(0) && insufficient_material(1)
+      puts "1/2-1/2\n\nInsufficient Material"
+    else
+      return false
+    end
+  end
+
+  def insufficient_material?(index)
+    counts = @board.piece_counts[index]
+    if counts[:queen] == 0 && counts[:rook] == 0 && counts[:pawn] == 0
+      if counts[:bishop] == 0
+        return true
+      elsif counts[:knight] == 0
+        if counts[:bishop] == 1
+          return true
+        else
+          indicies = get_indicies(@board.pieces[index][:bishop].bitboard)
+          light = false
+          dark = false
+          indicies.each { |index| index != 0 && index % 2 == 1 ? light = true : dark = true }
+          return light && dark ? false : true
+        end
+      else
+        return false
+      end
+    else
+      return false
+    end
   end
   
   def parse_algebraic(algebraic)
@@ -228,7 +263,7 @@ class Game
   def get_user_capture(target)
     data = {  }
     compare = 1 << target
-    opp_pieces = @to_move == 'white' ? board.pieces[1] : @board.pieces[0]
+    opp_pieces = @to_move == "white" ? board.pieces[1] : @board.pieces[0]
     opp_pieces.each { |type, piece| data[:capture] = type if piece.bitboard & compare > 0 }
     return data
   end

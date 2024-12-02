@@ -1,7 +1,7 @@
 class Board
   include BitManipulations
 
-  attr_reader :pieces, :white_occupancy, :black_occupancy, :moves
+  attr_reader :pieces, :white_occupancy, :black_occupancy, :moves, :piece_counts
 
   def initialize
     @pieces = initialize_pieces
@@ -55,8 +55,7 @@ class Board
   def update(to_move)
     @moves.generate_moves(to_move, @pieces, @white_occupancy, @black_occupancy)
   end
-  #private
-
+  
   def initialize_pieces
     white_pieces = initialize_color_pieces("white")
     black_pieces = initialize_color_pieces("black")
@@ -80,16 +79,14 @@ class Board
       knight: 2,
       bishop: 2,
       rook: 2,
-      queen: 1,
-      king: 1
+      queen: 1
     }
     black = {
       pawn: 8,
       knight: 2,
       bishop: 2,
       rook: 2,
-      queen: 1,
-      king: 1
+      queen: 1
     }
     [white, black]
   end
@@ -131,7 +128,6 @@ class Board
       capture.bitboard ^= 1 << move_data[:target]
     end
     @piece_counts[index][capture_type] -= 1
-    p @piece_counts
   end
 
   def update_promotion(promotion, move_data)
@@ -163,6 +159,7 @@ class Board
     end
     king.in_check = true if counter > 0
     king.in_double_check = true if counter > 1
+    p king
     return counter > 0 ? true : false
   end
 end
