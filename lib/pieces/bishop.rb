@@ -11,9 +11,9 @@ class Bishop < Piece
   end
 
   # Generate attack tables
-  def attack_mask
+  def attack_mask(bitboard = @bitboard)
     attacks = 0
-    if @bitboard != 0
+    if bitboard != 0
       indicies = get_indicies
       indicies.each do |square|
         temp_board = 1 << square

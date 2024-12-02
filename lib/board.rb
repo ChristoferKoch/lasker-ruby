@@ -46,6 +46,7 @@ class Board
     update_bitboard(piece, move_data, to_move)
     update_capture(capture, move_data) if capture
     update_promotion(promotion, move_data) if promotion
+    move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
     @moves.game_moves.push(move)
   end
 
@@ -111,5 +112,15 @@ class Board
 
   def update_promotion(promotion, move_data)
     promotion.bitboard |= 1 << move_data[:target]
+  end
+
+  def check?(king, opposing_pieces)
+    counter = 0
+    king.checkboard = 0
+    opposing_pieces.each_value do |piece|
+      if piece.attackboard & king > 0
+        indicies = 
+      end
+    end
   end
 end

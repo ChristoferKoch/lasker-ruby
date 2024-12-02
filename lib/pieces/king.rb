@@ -18,16 +18,16 @@ class King < Piece
   end
 
   # Generate attack tables
-  def attack_mask
+  def attack_mask(bitboard = @bitboard)
     attacks = 0
-    attacks = attacks | ((@bitboard << 8) & Piece::COMPARISON)
-    attacks = attacks | ((@bitboard << 7) & Piece::NOT_A_FILE)
-    attacks = attacks | ((@bitboard << 9) & Piece::NOT_H_FILE)
-    attacks = attacks | ((@bitboard << 1) & Piece::NOT_A_FILE)
-    attacks = attacks | ((@bitboard >> 8) & Piece::COMPARISON)
-    attacks = attacks | ((@bitboard >> 7) & Piece::NOT_H_FILE)
-    attacks = attacks | ((@bitboard >> 9) & Piece::NOT_A_FILE)
-    attacks = attacks | ((@bitboard >> 1) & Piece::NOT_H_FILE)
+    attacks = attacks | ((bitboard << 8) & Piece::COMPARISON)
+    attacks = attacks | ((bitboard << 7) & Piece::NOT_A_FILE)
+    attacks = attacks | ((bitboard << 9) & Piece::NOT_H_FILE)
+    attacks = attacks | ((bitboard << 1) & Piece::NOT_A_FILE)
+    attacks = attacks | ((bitboard >> 8) & Piece::COMPARISON)
+    attacks = attacks | ((bitboard >> 7) & Piece::NOT_H_FILE)
+    attacks = attacks | ((bitboard >> 9) & Piece::NOT_A_FILE)
+    attacks = attacks | ((bitboard >> 1) & Piece::NOT_H_FILE)
   end
 
   def moves(same, diff, opp_pieces)

@@ -13,16 +13,16 @@ class Knight < Piece
     super
   end
 
-  def attack_mask
+  def attack_mask(bitboard = @bitboard)
     attacks = 0
-    attacks |= ((@bitboard << 15) & NOT_A_FILE)
-    attacks |= ((@bitboard << 17) & NOT_H_FILE)
-    attacks |= ((@bitboard << 10) & NOT_GH_FILE)
-    attacks |= ((@bitboard << 6) & NOT_AB_FILE)
-    attacks |= ((@bitboard >> 15) & NOT_H_FILE)
-    attacks |= ((@bitboard >> 17) & NOT_A_FILE)
-    attacks |= ((@bitboard >> 10) & NOT_AB_FILE)
-    attacks |= ((@bitboard >> 6) & NOT_GH_FILE)
+    attacks |= ((bitboard << 15) & NOT_A_FILE)
+    attacks |= ((bitboard << 17) & NOT_H_FILE)
+    attacks |= ((bitboard << 10) & NOT_GH_FILE)
+    attacks |= ((bitboard << 6) & NOT_AB_FILE)
+    attacks |= ((bitboard >> 15) & NOT_H_FILE)
+    attacks |= ((bitboard >> 17) & NOT_A_FILE)
+    attacks |= ((bitboard >> 10) & NOT_AB_FILE)
+    attacks |= ((bitboard >> 6) & NOT_GH_FILE)
   end
 
   def moves(same_occupancy, diff_occupancy, opp_pieces, king, squares = nil)
