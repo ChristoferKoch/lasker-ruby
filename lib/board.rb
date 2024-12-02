@@ -46,12 +46,12 @@ class Board
     update_bitboard(piece, move_data, to_move)
     update_capture(capture, move_data) if capture
     update_promotion(promotion, move_data) if promotion
+    update_occupancy
     move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
     @moves.game_moves.push(move)
   end
 
   def update(to_move)
-    update_occupancy
     @moves.generate_moves(to_move, @pieces, @white_occupancy, @black_occupancy)
   end
   #private
@@ -118,9 +118,27 @@ class Board
     counter = 0
     king.checkboard = 0
     opposing_pieces.each_value do |piece|
-      if piece.attackboard & king > 0
-        indicies = 
+      if (piece.attackboard & king.bitboard) > 0
+        indicies = piece.get_indicies
+        indicies.each do |index|
+          tempboard = piece.bitboard & ~(1 << index)
+          if (king.bitboard & piece.attack_mask(tempboard)) != 0
+            if piece.is_a?(Pawn) || piece.is_a?(Knight)
+              king.checkboard |= 1 << index
+              counter += 1
+            else
+              rayboard = piece.get_ray([index], king.get_indicies[0])
+              if count_bits((rayboard & (@white_occupancy | @black_occupancy))) == 1
+                king.checkboard |= rayboard
+                counter += 1
+              end
+            end
+          end          
+        end
       end
     end
+    king.in_check = true if counter > 0
+    king.in_double_check = true if counter > 1
+    return counter > 0 ? true : false
   end
 end
