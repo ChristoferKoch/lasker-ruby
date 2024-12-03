@@ -36,7 +36,7 @@ ruby lasker.rb
   - [ ] Special Moves
     - [ ] En passant
 	- [ ] Promotion
-	- [ ] Check
+	- [x] Check
 	- [x] Castling
   - [ ] Debugging (ongoing process)
 - [ ] Algebraic Notation Parser
@@ -53,9 +53,9 @@ ruby lasker.rb
     - [x] Make move
 	- [x] End game conditions
 	- [ ] End game results
-	  - [ ] Checkmate
-	  - [ ] Stalemate
-	  - [ ] Draw due to insufficient material
+	  - [x] Checkmate
+	  - [x] Stalemate
+	  - [x] Draw due to insufficient material
 	  - [ ] Draw by threefold repetition
 - [ ] Main Menu
   - [ ] Play vs eval mode
