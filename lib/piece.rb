@@ -24,8 +24,9 @@ class Piece
         same_blockerboard = moveboard & same_occupancy
         diff_blockerboard = moveboard & diff_occupancy
         blockerboard = same_blockerboard | diff_blockerboard
-        moveboard = blockerboard > 0 ? unblocked_moves(1 << index, index, blockerboard, same_blockerboard) : moveboard
-        moveboard = king.in_check ? moveboard & king.checkboard : moveboard
+        moveboard = unblocked_moves(1 << index, index, blockerboard, same_blockerboard) if
+          blockerboard > 0
+        moveboard = moveboard & king.checkboard if king.in_check
       elsif moveboard > 0
         moveboard |= get_ray(king.bitboard, index) ^ king.bitboard
         moveboard = king.in_check ? 0 : pin_check | moveboard
@@ -37,7 +38,7 @@ class Piece
         occupancy: diff_occupancy,
         opp_pieces: opp_pieces,
         castle: nil,
-       promotion: nil,
+        promotion: nil,
         en_passant: false        
       }) if moveboard > 0
     end

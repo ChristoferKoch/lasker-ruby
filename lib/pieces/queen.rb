@@ -72,7 +72,7 @@ class Queen < Piece
         elsif distance % 9 == 0
           shift = 9
         elsif distance % 7 == 0
-          shift = distance == 7 && diagonal?(attacker, piece) ? 7 : 1
+          shift = distance == 7 || diagonal?(attacker, piece) ? 7 : 1
         else
           shift = 1
         end

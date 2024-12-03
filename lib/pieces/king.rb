@@ -23,11 +23,11 @@ class King < Piece
     attacks = attacks | ((bitboard << 8) & Piece::COMPARISON)
     attacks = attacks | ((bitboard << 7) & Piece::NOT_A_FILE)
     attacks = attacks | ((bitboard << 9) & Piece::NOT_H_FILE)
-    attacks = attacks | ((bitboard << 1) & Piece::NOT_A_FILE)
+    attacks = attacks | ((bitboard << 1) & Piece::NOT_H_FILE)
     attacks = attacks | ((bitboard >> 8) & Piece::COMPARISON)
     attacks = attacks | ((bitboard >> 7) & Piece::NOT_H_FILE)
     attacks = attacks | ((bitboard >> 9) & Piece::NOT_A_FILE)
-    attacks = attacks | ((bitboard >> 1) & Piece::NOT_H_FILE)
+    attacks = attacks | ((bitboard >> 1) & Piece::NOT_A_FILE)
   end
 
   def moves(same, diff, opp_pieces)
@@ -70,14 +70,11 @@ class King < Piece
       tempboard = board & piece.attackboard
       testboard = 0
       if tempboard > 0 && (piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen))
-        indicies = get_indicies(board)
-        indicies.each do |index|
-          rayboard = piece.get_ray(piece.get_indicies, index)
-          testboard |= testboard << index if
-            count_bits(rayboard & occupancy) == 1
-        end
+        rayboard = piece.get_ray(piece.get_indicies, get_indicies[0])
+        testboard = rayboard | tempboard | 1 << piece.get_indicies[0] if
+          count_bits(rayboard & occupancy) == 1
       end
-      board ^= testboard
+      board ^= tempboard
     end
     return board
   end

@@ -92,6 +92,7 @@ class Game
     loop do
       #system("clear")
       @board.display_gameboard
+      break if game_over?
       puts "Move:"
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
       p moves
@@ -103,7 +104,6 @@ class Game
         move = parse_algebraic(move)
       end
       @board.make_move(move, @to_move)
-      break if game_over?
       @to_move = @to_move == "white" ? "black" : "white"
       @board.update(@to_move)
     end
@@ -111,14 +111,16 @@ class Game
 
   def game_over?
     if @board.moves.move_list.length == 0
-      index = @to_move == "white" ? 1 : 0
+      index = @to_move == "white" ? 0 : 1
       if @board.pieces[index][:king].in_check
-        puts index == 1 ? "1-0\n\nWhite Checkmates Black" : "0-1\n\nBlack Checkmates White"
+        puts index == 1 ? "1-0\nCheckmate" : "0-1\nCheckmate"
       else
-        puts "1/2-1/2\n\nStalemate"
+        puts "1/2-1/2\nStalemate"
       end
-    elsif insufficient_material?(0) && insufficient_material(1)
-      puts "1/2-1/2\n\nInsufficient Material"
+      return true
+    elsif insufficient_material?(0) && insufficient_material?(1)
+      puts "1/2-1/2\nInsufficient Material"
+      return true
     else
       return false
     end
