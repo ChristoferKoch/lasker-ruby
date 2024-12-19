@@ -90,11 +90,12 @@ class Game
 
   def game_loop
     loop do
-      #system("clear")
+      system("clear")
       @board.display_gameboard
       break if game_over?
       puts "Move:"
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
+      #p moves
       move = gets
       move = parse_algebraic(move)
       while !@board.moves.move_list.include?(move)
@@ -216,7 +217,7 @@ class Game
       if current != "\n"
         if current == '='
           data[:promotion] = get_explicit_type(algebraic[i + 1])
-          return 1 if promotion == :pawn
+          return 1 if data[:promotion] == :pawn || data[:promotion] == :king
           i += 2
         elsif current == '+' || current == '#'
           i += 1

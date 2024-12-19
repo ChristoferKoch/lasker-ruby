@@ -68,10 +68,10 @@ class Board
   def initialize_color_pieces(color)
     {
       pawn: Pawn.new(color),
-      #knight: Knight.new(color),
-      #bishop: Bishop.new(color),
-      #rook: Rook.new(color),
-      #queen: Queen.new(color),
+      knight: Knight.new(color),
+      bishop: Bishop.new(color),
+      rook: Rook.new(color),
+      queen: Queen.new(color),
       king: King.new(color)
     }
   end

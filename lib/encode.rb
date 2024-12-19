@@ -23,28 +23,44 @@ module Encode
     moves = []
     data.each do |datum|
       type = NUMERIC_CODE[datum[:code_type]]
+      promotion = false
       en_passant = false
       indicies = get_indicies(datum[:moveboard])
       indicies.each do |target|
         if type == 1
-          en_passant = encode_en_passant(datum[:origin_square], target, datum[:occupancy])
+          if (target < 64 && target > 56) || (target < 8 && target > -1)
+            promotion = 2
+          else
+            en_passant = encode_en_passant(datum[:origin_square], target, datum[:occupancy])
+          end
         end
-        move = datum[:origin_square]
-        move |= target << 6
-        move |= type << 12
-        move |= encode_type(datum[:opp_pieces], 1 << target) << 15 if
-          (1 << target) & datum[:occupancy] > 0
-        move |= 1 << 15 if en_passant
-        move |= datum[:promotion] << 18 if datum[:promotion]
-        move |= 1 << 21 if en_passant
-        move |= 1 << 22 if
-          type == 1 && (datum[:origin_square] - target).abs == 16
-        moves.push(move)
+        moves.push(encode_generated_moves(datum, target, type, promotion, en_passant))
+        moves.flatten!
       end
     end
     return moves
   end
 
+  def encode_generated_moves(data, target, type, promotion, en_passant)
+    moves = []
+    i = promotion ? 5 : 2
+    while i > 1
+      move = data[:origin_square]
+      move |= target << 6
+      move |= type << 12
+      move |= encode_type(data[:opp_pieces], 1 << target) << 15 if
+        (1 << target) & data[:occupancy] > 0
+      move |= 1 << 15 if en_passant
+      move |= i << 18 if promotion
+      move |= 1 << 21 if en_passant
+      move |= 1 << 22 if
+        type == 1 && (data[:origin_square] - target).abs == 16
+      moves.push(move)
+      i -= 1
+    end
+    return moves
+  end
+  
   def encode_user_move(data)
     piece = NUMERIC_CODE[data[:piece]]
     capture = data[:capture] ? NUMERIC_CODE[data[:capture]] : 0
