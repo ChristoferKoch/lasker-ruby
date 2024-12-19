@@ -23,18 +23,22 @@ module Encode
     moves = []
     data.each do |datum|
       type = NUMERIC_CODE[datum[:code_type]]
-      if datum[:castle]
-        
-      end
+      en_passant = false
       indicies = get_indicies(datum[:moveboard])
       indicies.each do |target|
+        if type == 1
+          en_passant = encode_en_passant(datum[:origin_square], target, datum[:occupancy])
+        end
         move = datum[:origin_square]
         move |= target << 6
         move |= type << 12
         move |= encode_type(datum[:opp_pieces], 1 << target) << 15 if
           (1 << target) & datum[:occupancy] > 0
+        move |= 1 << 15 if en_passant
         move |= datum[:promotion] << 18 if datum[:promotion]
-        move |= 1 << 21 if datum[:en_passant]
+        move |= 1 << 21 if en_passant
+        move |= 1 << 22 if
+          type == 1 && (datum[:origin_square] - target).abs == 16
         moves.push(move)
       end
     end
@@ -50,6 +54,9 @@ module Encode
     move |= piece << 12
     move |= capture << 15
     move |= promotion << 18
+    move |= 1 << 21 if data[:en_passant]
+    move |= 1 << 22 if
+      piece == 1 && (data[:origin] - data[:target]).abs == 16
     return move
   end
 
@@ -60,6 +67,16 @@ module Encode
       end
     end
     return nil
+  end
+
+  def encode_en_passant(origin, target, occupancy)
+    if (target - origin).abs == 7 || (target - origin).abs == 9
+      if 1 << target & occupancy == 0
+        return true
+      else
+        return false
+      end
+    end
   end
 
   def get_all(move)

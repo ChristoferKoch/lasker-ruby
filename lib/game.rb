@@ -95,7 +95,6 @@ class Game
       break if game_over?
       puts "Move:"
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
-      p moves
       move = gets
       move = parse_algebraic(move)
       while !@board.moves.move_list.include?(move)
@@ -179,7 +178,7 @@ class Game
       return 1 if data[:error]
       data.merge!(get_user_origin(data[:piece], data[:disambiguate], 1 << data[:target]))
       return 2 if data[:error]
-      data.merge!(get_user_capture(data[:target]))
+      data.merge!(get_user_capture(data[:target], data[:origin], data[:piece]))
     end
     return encode_user_move(data)
   end
@@ -262,11 +261,27 @@ class Game
     return data
   end
 
-  def get_user_capture(target)
+  def get_user_capture(target, origin, piece)
     data = {  }
-    compare = 1 << target
-    opp_pieces = @to_move == "white" ? board.pieces[1] : @board.pieces[0]
-    opp_pieces.each { |type, piece| data[:capture] = type if piece.bitboard & compare > 0 }
+    opp_pieces = @to_move == "white" ? @board.pieces[1] : @board.pieces[0]
+    occupancy = @to_move == "white" ? @board.black_occupancy : @board.white_occupancy
+    compare = 0
+    if occupancy & 1 << target == 0
+      if piece == :pawn && ((target - origin).abs == 7 || (target - origin).abs == 9)
+        if double_push?(@board.moves.last_move)
+          compare = @to_move == "white" ? 1 << (target - 8) : 1 << (target + 8)
+          if compare & (1 << get_target(@board.moves.last_move))
+            data[:capture] = :pawn
+            data[:en_passant] = true
+            return data
+          end
+        end
+      end
+    else
+      compare = 1 << target
+    end
+    opp_pieces.each { |type, piece| data[:capture] = type if piece.bitboard & compare > 0 } if
+      compare & occupancy > 0
     return data
   end
 
@@ -275,8 +290,13 @@ class Game
     board_access = @board.pieces[index]
     same_occupancy = index == 0 ? @board.white_occupancy : @board.black_occupancy
     diff_occupancy = index == 0 ? @board.black_occupancy : @board.white_occupancy
-    moves = board_access[piece]
-                .moves(same_occupancy, diff_occupancy, opp_pieces, board_access[:king], squares)
+    last_move = @board.moves.game_moves ? @board.moves.game_moves[-1] : nil
+    moves = piece == :pawn ?
+              board_access[piece].moves(
+                same_occupancy, diff_occupancy, opp_pieces, board_access[:king], last_move, squares
+              ) :
+              board_access[piece].moves(
+                same_occupancy, diff_occupancy, opp_pieces, board_access[:king], squares)
     return moves
   end
 

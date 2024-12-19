@@ -52,6 +52,7 @@ class Board
     update_occupancy
     move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
     @moves.game_moves.push(move)
+    @moves.last_move = move
   end
 
   def update(to_move)
@@ -67,10 +68,10 @@ class Board
   def initialize_color_pieces(color)
     {
       pawn: Pawn.new(color),
-      knight: Knight.new(color),
-      bishop: Bishop.new(color),
-      rook: Rook.new(color),
-      queen: Queen.new(color),
+      #knight: Knight.new(color),
+      #bishop: Bishop.new(color),
+      #rook: Rook.new(color),
+      #queen: Queen.new(color),
       king: King.new(color)
     }
   end

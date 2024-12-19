@@ -1,5 +1,5 @@
 class Piece
-  include BitManipulations
+  include BitManipulations, Encode
 
   attr_accessor :bitboard, :attackboard
   attr_reader :color, :token

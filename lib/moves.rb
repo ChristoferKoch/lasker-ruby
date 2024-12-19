@@ -1,10 +1,12 @@
 class Moves
   include BitManipulations, Encode
+  attr_accessor :last_move
   attr_reader :move_list, :game_moves
 
   def initialize(pieces, white_occupancy, black_occupancy)
     generate_moves('white', pieces, white_occupancy, black_occupancy)
     @game_moves = []
+    @last_move = nil
   end
 
   def generate_moves(color, pieces, white_occupancy, black_occupancy)
@@ -16,7 +18,12 @@ class Moves
     if !pieces[:king].in_double_check
       pieces.each do |type, piece|
         if type != :king
-          data = pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
+          if type == :pawn
+            data = pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king],
+                                      @last_move)
+          else
+            data = pieces[type].moves(same_occupancy, diff_occupancy, opp_pieces, pieces[:king])
+          end
           moves += encode_moves(data)
         end
       end
