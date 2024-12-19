@@ -33,9 +33,9 @@ ruby lasker.rb
 	- [x] Knight moves
 	- [x] Pawn moves
 	- [x] King moves
-  - [ ] Special Moves
-    - [ ] En passant
-	- [ ] Promotion
+  - [x] Special Moves
+    - [x] En passant
+	- [x] Promotion
 	- [x] Check
 	- [x] Castling
   - [ ] Debugging (ongoing process)
