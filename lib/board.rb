@@ -1,5 +1,5 @@
 class Board
-  include BitManipulations
+  include BitManipulations, DisplayElements
 
   attr_reader :pieces, :white_occupancy, :black_occupancy, :moves, :piece_counts
 
@@ -24,6 +24,7 @@ class Board
     index = 56
     rank = 8
 
+    print_header
     puts "   +---+---+---+---+---+---+---+---+"
 
     while rank > 0

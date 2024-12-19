@@ -1,3 +1,4 @@
+require_relative './lib/display_elements.rb'
 require_relative './lib/bit_manipulations.rb'
 require_relative './lib/encode.rb'
 require_relative './lib/piece.rb'
@@ -11,5 +12,8 @@ require_relative './lib/moves.rb'
 require_relative './lib/board.rb'
 require_relative './lib/game.rb'
 
-game = Game.new
-game.game_loop
+system("clear")
+print_header
+print_menu
+#game = Game.new
+#game.game_loop
