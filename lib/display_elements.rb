@@ -1,3 +1,4 @@
+# coding: utf-8
 module DisplayElements
   def print_header
     puts "+-------------------------------------+
@@ -12,8 +13,30 @@ module DisplayElements
 +-------------------------------------+"
   end
 
+  def print_decorative_board
+   puts "   +---+---+---+---+---+---+---+---+
+8  | ♜ |   | ♝ |   | ♚ | ♝ | ♞ | ♜ |
+   +---+---+---+---+---+---+---+---+
+7  |   | ♟ | ♟ |   |   | ♟ | ♟ | ♟ |
+   +---+---+---+---+---+---+---+---+
+6  | ♟ |   | ♟ |   |   |   |   |   |
+   +---+---+---+---+---+---+---+---+
+5  |   |   |   |   |   |   |   |   |
+   +---+---+---+---+---+---+---+---+
+4  |   |   |   | ♘ | ♙ |   |   |   |
+   +---+---+---+---+---+---+---+---+
+3  |   |   |   |   |   |   |   |   |
+   +---+---+---+---+---+---+---+---+
+2  | ♙ | ♙ | ♙ |   |   | ♙ | ♙ | ♙ |
+   +---+---+---+---+---+---+---+---+
+1  | ♖ | ♘ | ♗ |   | ♔ |   |   | ♖ |
+   +---+---+---+---+---+---+---+---+
+
+     a   b   c   d   e   f   g   h"
+  end
+
   def print_menu
-    print "\n\tMain Menu\n
+    print "\n\tType of Game:\n
 \t1. Human vs Human
 \t2. Human vs Computer
 
@@ -21,7 +44,7 @@ module DisplayElements
   end
 
   def print_color_select
-    print "\n\tWhat Color Will You Play?\n
+    print "\n\tColor Selection\n
 \t1. White
 \t2. Black
 

@@ -16,6 +16,7 @@ include DisplayElements
 
 system("clear")
 print_header
+print_decorative_board
 print_menu
 game_type = gets.chomp
 while game_type != '1' && game_type != '2'
@@ -27,9 +28,10 @@ if game_type == '1'
 else
   system("clear")
   print_header
+  print_decorative_board
   print_color_select
   color = gets.chomp
-  while color != '1' || color != '2'
+  while color != '1' && color != '2'
     print "\tInvalid input (1 or 2): "
     color = gets.chomp
   end
