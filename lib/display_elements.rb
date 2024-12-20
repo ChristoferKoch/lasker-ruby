@@ -13,6 +13,18 @@ module DisplayElements
   end
 
   def print_menu
-    puts ""
+    print "\n\tMain Menu\n
+\t1. Human vs Human
+\t2. Human vs Computer
+
+\tGame type (1 or 2): "
+  end
+
+  def print_color_select
+    print "\n\tWhat Color Will You Play?\n
+\t1. White
+\t2. Black
+
+\tColor (1 or 2): "
   end
 end
