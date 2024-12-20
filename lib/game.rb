@@ -83,9 +83,11 @@ class Game
     k: :king
   }
   
-  def initialize
+  def initialize(color = nil)
     @board = Board.new
     @to_move = "white"
+    @player_color = '1' ? "white" : "black"
+    @engine = color ? Engine.new(color) : nil
   end
 
   def game_loop
@@ -93,15 +95,19 @@ class Game
       system("clear")
       @board.display_gameboard
       break if game_over?
-      puts "Move:"
+      print "Move: "
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
       #p moves
-      move = gets
-      move = parse_algebraic(move)
-      while !@board.moves.move_list.include?(move)
-        puts "Illegal move, please try again:"
+      if @player_color == @to_move || !@player_color
         move = gets
         move = parse_algebraic(move)
+        while !@board.moves.move_list.include?(move)
+          print "Illegal move, please try again: "
+          move = gets
+          move = parse_algebraic(move)
+        end
+      else
+        move = @engine.get_move
       end
       @board.make_move(move, @to_move)
       @to_move = @to_move == "white" ? "black" : "white"
