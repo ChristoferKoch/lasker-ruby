@@ -98,7 +98,7 @@ class Game
       print "Move: "
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
       #p moves
-      if @player_color == @to_move || !@player_color
+      if !@engine || @player_color == @to_move
         move = gets
         move = parse_algebraic(move)
         while !@board.moves.move_list.include?(move)
