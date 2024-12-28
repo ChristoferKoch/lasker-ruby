@@ -27,8 +27,8 @@ class Knight < Piece
 
   def moves(same_occupancy, diff_occupancy, opp_pieces, king, squares = nil)
     moves = []
-    indicies = squares ? get_indicies(squares) : get_indicies
-    indicies.each do |index|
+    indexes = squares ? get_indexes(squares) : get_indexes
+    indexes.each do |index|
       moveboard = move_mask(1 << index, index)
       pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)
       if !pin_check && king.checkboard == 0

@@ -86,13 +86,13 @@ class Game
   def initialize(color = nil)
     @board = Board.new
     @to_move = "white"
-    @player_color = '1' ? "white" : "black"
-    @engine = color ? Engine.new(color) : nil
+    @player_color = color == '1' ? "white" : "black"
+    @engine = color ? Engine.new : nil
   end
 
   def game_loop
     loop do
-      system("clear")
+      #system("clear")
       @board.display_gameboard
       break if game_over?
       print "Move: "
@@ -107,7 +107,7 @@ class Game
           move = parse_algebraic(move)
         end
       else
-        move = @engine.get_move
+        move = @engine.get_move(@board, @to_move)
       end
       @board.make_move(move, @to_move)
       @to_move = @to_move == "white" ? "black" : "white"
@@ -141,10 +141,10 @@ class Game
         if counts[:bishop] == 1
           return true
         else
-          indicies = get_indicies(@board.pieces[index][:bishop].bitboard)
+          indexes = get_indexes(@board.pieces[index][:bishop].bitboard)
           light = false
           dark = false
-          indicies.each { |index| index != 0 && index % 2 == 1 ? light = true : dark = true }
+          indexes.each { |index| index != 0 && index % 2 == 1 ? light = true : dark = true }
           return light && dark ? false : true
         end
       else
@@ -252,18 +252,18 @@ class Game
     if possible_squares == 0
       data[:error] = true
       return data
-    elsif get_indicies(possible_squares).length == 1
-      data[:origin] = get_indicies(possible_squares)[0]
+    elsif get_indexes(possible_squares).length == 1
+      data[:origin] = get_indexes(possible_squares)[0]
       return data
     end
     moves = find_possible_moves(piece, possible_squares, index)
-    possible_indicies = []
-    moves.each { |move| possible_indicies
+    possible_indexes = []
+    moves.each { |move| possible_indexes
                    .push(move[:origin_square]) if move[:moveboard] & target > 0 }
-    if possible_indicies.length > 1
+    if possible_indexes.length > 1
       data[:error] = true
     else
-      data[:origin] = possible_indicies[0]
+      data[:origin] = possible_indexes[0]
     end
     return data
   end

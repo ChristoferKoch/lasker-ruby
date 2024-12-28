@@ -31,8 +31,8 @@ class Pawn < Piece
 
   def moves(same_occupancy, diff_occupancy, opp_pieces, king, last_move, squares = nil)
     moves = []
-    indicies = squares ? get_indicies(squares) : get_indicies
-    indicies.each do |index|
+    indexes = squares ? get_indexes(squares) : get_indexes
+    indexes.each do |index|
       moveboard = move_mask(1 << index, index)
       attackboard = attack_mask(1 << index) & ~same_occupancy & diff_occupancy
       attackboard |= en_passant(1 << index, last_move) if
@@ -44,7 +44,7 @@ class Pawn < Piece
         moveboard |= attackboard
         moveboard = king.in_check ? moveboard & king.checkboard : moveboard
       elsif attackboard > 0
-        king_distance = (index - get_indicies(king.bitboard)[0]).abs
+        king_distance = (index - get_indexes(king.bitboard)[0]).abs
         if king_distance % 7 != 0 && king_distance % 9 != 0
           moveboard = 0
         else
@@ -81,7 +81,7 @@ class Pawn < Piece
   end
 
   def en_passant(bitboard, last_move)
-    index = get_indicies(bitboard)[0]
+    index = get_indexes(bitboard)[0]
     target = get_target(last_move)
     attack = 0
     if double_push?(last_move) && (target - index).abs == 1

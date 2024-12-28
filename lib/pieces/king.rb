@@ -35,7 +35,7 @@ class King < Piece
     moveboard = @attackboard & ~same
     moveboard = safety(moveboard, opp_pieces, same | diff)
     moveboard |= castle_moves(same | diff, opp_pieces) if @castle_permissions > 0 && !@in_check
-    index = get_indicies
+    index = get_indexes
     moves.push({
         moveboard: moveboard,
         code_type: self.class.to_s.downcase.to_sym,
@@ -70,8 +70,8 @@ class King < Piece
       tempboard = board & piece.attackboard
       testboard = 0
       if tempboard > 0 && (piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen))
-        rayboard = piece.get_ray(piece.get_indicies, get_indicies[0])
-        testboard = rayboard | tempboard | 1 << piece.get_indicies[0] if
+        rayboard = piece.get_ray(piece.get_indexes, get_indexes[0])
+        testboard = rayboard | tempboard | 1 << piece.get_indexes[0] if
           count_bits(rayboard & occupancy) == 1
       end
       board ^= tempboard

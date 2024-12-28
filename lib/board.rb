@@ -14,7 +14,7 @@ class Board
     @gameboard = Array.new(64, ' ')
     @pieces.each do |color_pieces|
       color_pieces.each_value do |piece|
-        piece.get_indicies.each { |index| @gameboard[index] = piece.token }
+        piece.get_indexes.each { |index| @gameboard[index] = piece.token }
       end
     end
     print_gameboard
@@ -143,8 +143,8 @@ class Board
     king.checkboard = 0
     opposing_pieces.each_value do |piece|
       if (piece.attackboard & king.bitboard) > 0
-        indicies = piece.get_indicies
-        indicies.each do |index|
+        indexes = piece.get_indexes
+        indexes.each do |index|
           tempboard = count_bits(piece.bitboard) > 1 ?
                         piece.bitboard & ~(1 << index) : piece.bitboard
           if (king.bitboard & piece.attack_mask(tempboard)) != 0
@@ -152,7 +152,7 @@ class Board
               king.checkboard |= 1 << index
               counter += 1
             else
-              rayboard = piece.get_ray([index], king.get_indicies[0])
+              rayboard = piece.get_ray([index], king.get_indexes[0])
               if count_bits((rayboard & (@white_occupancy | @black_occupancy))) == 1
                 king.checkboard |= rayboard
                 counter += 1

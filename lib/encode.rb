@@ -25,8 +25,8 @@ module Encode
       type = NUMERIC_CODE[datum[:code_type]]
       promotion = false
       en_passant = false
-      indicies = get_indicies(datum[:moveboard])
-      indicies.each do |target|
+      indexes = get_indexes(datum[:moveboard])
+      indexes.each do |target|
         if type == 1
           if (target < 64 && target > 56) || (target < 8 && target > -1)
             promotion = 2

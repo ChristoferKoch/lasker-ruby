@@ -16,8 +16,8 @@ class Piece
   # Works only for sliding pieces. Knights, pawns, and kings need unique functions
   def moves(same_occupancy, diff_occupancy, opp_pieces, king, squares = nil)
     moves = []
-    indicies = squares ? get_indicies(squares) : get_indicies
-    indicies.each do |index|
+    indexes = squares ? get_indexes(squares) : get_indexes
+    indexes.each do |index|
       moveboard = move_mask(1 << index, index)
       pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)
       if !pin_check
@@ -50,10 +50,10 @@ class Piece
     attackers.each_value do |piece|
       if piece.is_a?(Rook) || piece.is_a?(Bishop) || piece.is_a?(Queen)
         if piece.attackboard & king.bitboard > 0
-          rayboard = piece.get_ray(piece.get_indicies, king.get_indicies[0])
+          rayboard = piece.get_ray(piece.get_indexes, king.get_indexes[0])
           pieceboard = 1 << index
           if rayboard & pieceboard > 0
-            rayboard = piece.get_ray(piece.get_indicies, index)
+            rayboard = piece.get_ray(piece.get_indexes, index)
             if count_bits(rayboard & occupancy) == 1
               return rayboard
             end

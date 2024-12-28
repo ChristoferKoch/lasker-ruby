@@ -14,8 +14,8 @@ class Rook < Piece
   def attack_mask(bitboard = @bitboard)
     attacks = 0
     if bitboard != 0
-      indicies = get_indicies
-      indicies.each do |square|
+      indexes = get_indexes
+      indexes.each do |square|
         temp_board = 1 << square
         a_file = square != 0 ? (square + 1) % 8 : 1
         h_file = square != 0 ? square % 8 : 1

@@ -36,17 +36,17 @@ module BitManipulations
   end
 
   # Get the index of each piece on a given bitboard
-  def get_indicies(bitboard = @bitboard)
+  def get_indexes(bitboard = @bitboard)
     length = bitboard.bit_length
     index = 0
-    indicies = []
+    indexes = []
     while index < length
       if bitboard[index] & 1 == 1
-        indicies.push(index)
+        indexes.push(index)
       end
       index += 1
     end
-    return indicies
+    return indexes
   end
   
   # Add spacing to make display easier to read

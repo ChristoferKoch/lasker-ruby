@@ -59,9 +59,9 @@ ruby lasker.rb
 	  - [ ] Draw by threefold repetition
 - [ ] Main Menu
   - [ ] Play vs eval mode
-  - [ ] Human vs Human
-  - [ ] Human vs Computer
-    - [ ] Select color
+  - [x] Human vs Human
+  - [x] Human vs Computer
+    - [x] Select color
 - [ ] Chess Engine
   - [ ] Alpha-beta pruning
   - [ ] Piece Values
