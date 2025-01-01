@@ -62,9 +62,10 @@ ruby lasker.rb
   - [x] Human vs Human
   - [x] Human vs Computer
     - [x] Select color
+	- [ ] Select engine ply-depth
 - [ ] Chess Engine
-  - [ ] Alpha-beta pruning
-  - [ ] Piece Values
+  - [x] Alpha-beta pruning
+  - [x] Piece Values
   - [ ] Heuristics
 - [ ] Extras
   - [ ] Export games as pgn
