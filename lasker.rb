@@ -1,6 +1,7 @@
 require_relative "./lib/display_elements.rb"
 require_relative "./lib/bit_manipulations.rb"
 require_relative "./lib/encode.rb"
+require_relative "./lib/game_over.rb"
 require_relative "./lib/piece.rb"
 require_relative "./lib/pieces/pawn.rb"
 require_relative "./lib/pieces/rook.rb"

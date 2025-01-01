@@ -1,5 +1,5 @@
 class Game
-  include Encode, BitManipulations
+  include Encode, BitManipulations, GameOver
   attr_reader :board, :to_move
 
   ENCODE_SQUARES = {
@@ -94,7 +94,11 @@ class Game
     loop do
       #system("clear")
       @board.display_gameboard
-      break if game_over?
+      endgame_conditions = game_over(@board, @to_move)
+      if endgame_conditions[:game_over]
+        puts endgame_conditions[:result]
+        break
+      end
       print "Move: "
       moves = @board.moves.move_list.map { |move| parse_integer(move) }
       #p moves
@@ -112,46 +116,6 @@ class Game
       @board.make_move(move, @to_move)
       @to_move = @to_move == "white" ? "black" : "white"
       @board.update(@to_move)
-    end
-  end
-
-  def game_over?
-    if @board.moves.move_list.length == 0
-      index = @to_move == "white" ? 0 : 1
-      if @board.pieces[index][:king].in_check
-        puts index == 1 ? "1-0\nCheckmate" : "0-1\nCheckmate"
-      else
-        puts "1/2-1/2\nStalemate"
-      end
-      return true
-    elsif insufficient_material?(0) && insufficient_material?(1)
-      puts "1/2-1/2\nInsufficient Material"
-      return true
-    else
-      return false
-    end
-  end
-
-  def insufficient_material?(index)
-    counts = @board.piece_counts[index]
-    if counts[:queen] == 0 && counts[:rook] == 0 && counts[:pawn] == 0
-      if counts[:bishop] == 0
-        return true
-      elsif counts[:knight] == 0
-        if counts[:bishop] == 1
-          return true
-        else
-          indexes = get_indexes(@board.pieces[index][:bishop].bitboard)
-          light = false
-          dark = false
-          indexes.each { |index| index != 0 && index % 2 == 1 ? light = true : dark = true }
-          return light && dark ? false : true
-        end
-      else
-        return false
-      end
-    else
-      return false
     end
   end
   
