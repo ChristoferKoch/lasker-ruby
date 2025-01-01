@@ -55,38 +55,43 @@ class Engine
 
   def minimax(board, to_move, depth = 10)
     move = to_move == "white" ? alpha_beta_max(board, depth, -10000, 10000) : alpha_beta_min(board, depth, -10000, 10000)
+    return move[1]
   end
 
   def alpha_beta_max(board, depth, alpha, beta)
-    return [evaluate(board), nil] if depth == 0
+    return [evaluate_board(board), nil] if depth == 0
     # check game over conditions
     value = -10000
-    move_list = generate_moves("white", board.pieces, board.white_occupancy, board.black_occupancy)
+    current_move = nil
+    move_list = board.moves.generate_moves(
+      "white", board.pieces, board.white_occupancy, board.black_occupancy)
     move_list.each do |move|
       current_move = move
       board.make_move(move, "white")
       value = [value, alpha_beta_min(board, depth - 1, alpha, beta)[0]].max
-      board.unmake_move(move, "white")
+      board.unmake_move
       break if value > beta
       alpha = [alpha, value].max
     end
-    return [value, move]
+    return [value, current_move]
   end
 
   def alpha_beta_min(board, depth, alpha, beta)
-    return [evaluate(board), nil] if depth == 0
+    return [evaluate_board(board), nil] if depth == 0
     # check game over conditions
     value = 10000
-    move_list = generate_moves("black", board.pieces, board.white_occupancy, board.black_occupancy)
+    current_move = nil
+    move_list = board.moves.generate_moves(
+      "black", board.pieces, board.white_occupancy, board.black_occupancy)
     move_list.each do |move|
       current_move = move
       board.make_move(move, "black")
       value = [value, alpha_beta_max(board, depth - 1, alpha, beta)[0]].min
-      board.unmake_move(move, "black")
+      board.unmake_move
       break if value < alpha
       beta = [beta, value].min
     end
-    return [value, move]
+    return [value, current_move]
   end
 
   def evaluate_board(board)

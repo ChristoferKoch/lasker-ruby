@@ -8,6 +8,8 @@ class Board
     @piece_counts = initialize_piece_counts
     update_occupancy
     @moves = Moves.new(@pieces, @white_occupancy, @black_occupancy)
+    @state_stack = [save_state()]
+    @current_state = 0
   end
 
   def display_gameboard
@@ -38,6 +40,15 @@ class Board
     puts "\n     a   b   c   d   e   f   g   h"
   end
 
+  def save_state
+    {
+      pieces: Marshal.dump(@pieces),
+      piece_counts: Marshal.dump(@piece_counts),
+      white_occupancy: Marshal.dump(@white_occupancy),
+      black_occupancy: Marshal.dump(@black_occupancy)
+    }
+  end
+
   def make_move(move, to_move)
     move_data = @moves.get_all(move)
     pieces_index = to_move == "white" ? 0 : 1
@@ -54,6 +65,17 @@ class Board
     move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
     @moves.game_moves.push(move)
     @moves.last_move = move
+    @state_stack.push(save_state)
+    @current_state += 1
+  end
+
+  def unmake_move
+    @current_state -= 1
+    @state_stack.pop
+    @pieces = Marshal.load(@state_stack[@current_state][:pieces])
+    @piece_counts = Marshal.load(@state_stack[@current_state][:piece_counts])
+    @white_occupancy = Marshal.load(@state_stack[@current_state][:white_occupancy])
+    @black_occupancy = Marshal.load(@state_stack[@current_state][:black_occupancy])
   end
 
   def update(to_move)
