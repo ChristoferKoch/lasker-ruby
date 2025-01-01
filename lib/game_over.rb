@@ -5,13 +5,16 @@ module GameOver
       index = to_move == "white" ? 0 : 1
       response[:game_over] = true
       if board.pieces[index][:king].in_check
-        response[:result] = index == 1 ? "1-0\nCheckmate" : "0-1\nCheckmate"
+        response[:text] = index == 1 ? "1-0\nCheckmate" : "0-1\nCheckmate"
+        response[:result] = index == 1 ? 10000 : -10000
       else
-        response[:result] = "1/2-1/2\nStalemate"
+        response[:text] = "1/2-1/2\nStalemate"
+        response[:result] = 0
       end
-    elsif insufficient_material?(0) && insufficient_material?(1)
+    elsif insufficient_material?(board, 0) && insufficient_material?(board, 1)
       response[:game_over] = true
-      response[:result] = "1/2-1/2\nInsufficient Material"
+      response[:text] = "1/2-1/2\nInsufficient Material"
+      response[:result] = 0
     end
     return response
   end

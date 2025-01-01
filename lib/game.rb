@@ -94,9 +94,9 @@ class Game
     loop do
       #system("clear")
       @board.display_gameboard
-      endgame_conditions = game_over(@board, @to_move)
-      if endgame_conditions[:game_over]
-        puts endgame_conditions[:result]
+      game_over_conditions = game_over(@board, @to_move)
+      if game_over_conditions[:game_over]
+        puts game_over_conditions[:text]
         break
       end
       print "Move: "

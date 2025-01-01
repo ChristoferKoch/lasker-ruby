@@ -1,5 +1,5 @@
 class Engine
-  include BitManipulations
+  include BitManipulations, GameOver
 
   attr_reader :evaluation
 
@@ -53,14 +53,16 @@ class Engine
     @evaluation = 78
   end
 
-  def minimax(board, to_move, depth = 10)
+  # Depth hardcoded to 4 while debugging
+  def minimax(board, to_move, depth = 4)
     move = to_move == "white" ? alpha_beta_max(board, depth, -10000, 10000) : alpha_beta_min(board, depth, -10000, 10000)
     return move[1]
   end
 
   def alpha_beta_max(board, depth, alpha, beta)
     return [evaluate_board(board), nil] if depth == 0
-    # check game over conditions
+    game_over_conditions = game_over(board, "white")
+    return [game_over_conditions[:result], nil] if game_over_conditions[:game_over]
     value = -10000
     current_move = nil
     move_list = board.moves.generate_moves(
@@ -78,7 +80,8 @@ class Engine
 
   def alpha_beta_min(board, depth, alpha, beta)
     return [evaluate_board(board), nil] if depth == 0
-    # check game over conditions
+    game_over_conditions = game_over(board, "black")
+    return [game_over_conditions[:result], nil] if game_over_conditions[:game_over]
     value = 10000
     current_move = nil
     move_list = board.moves.generate_moves(
