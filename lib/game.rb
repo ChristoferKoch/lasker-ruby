@@ -107,7 +107,7 @@ class Game
           move = parse_algebraic(move)
         end
       else
-        move = @engine.get_move(@board, @to_move)
+        move = @engine.minimax(@board, @to_move)
       end
       @board.make_move(move, @to_move)
       @to_move = @to_move == "white" ? "black" : "white"
