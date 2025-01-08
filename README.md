@@ -62,7 +62,7 @@ ruby lasker.rb
   - [x] Human vs Human
   - [x] Human vs Computer
     - [x] Select color
-	- [ ] Select engine ply-depth
+	- [x] Select engine ply-depth
 - [ ] Chess Engine
   - [x] Alpha-beta pruning
   - [x] Piece Values
