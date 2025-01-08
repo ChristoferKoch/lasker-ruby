@@ -36,7 +36,7 @@ module DisplayElements
   end
 
   def print_menu
-    print "\n\tType of Game:\n
+    print "\n\tType of Game\n
 \t1. Human vs Human
 \t2. Human vs Computer
 
@@ -49,5 +49,11 @@ module DisplayElements
 \t2. Black
 
 \tColor (1 or 2): "
+  end
+
+  def print_ply_select
+    print "\n\tPly Selection\n
+\tThe default is 4\u2014a reasonably fast game.\n
+\tPly (1 \u2013 20): "
   end
 end

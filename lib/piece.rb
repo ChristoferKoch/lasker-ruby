@@ -28,8 +28,8 @@ class Piece
           blockerboard > 0
         moveboard = moveboard & king.checkboard if king.in_check
       elsif moveboard > 0
-        moveboard |= get_ray(king.bitboard, index) ^ king.bitboard
-        moveboard = king.in_check ? 0 : pin_check | moveboard
+        moveboard &= get_ray(king.get_indexes, index) ^ king.bitboard
+        moveboard = king.in_check ? 0 : pin_check & moveboard
       end
       moves.push({
         moveboard: moveboard,

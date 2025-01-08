@@ -83,26 +83,26 @@ class Game
     k: :king
   }
   
-  def initialize(color = nil)
+  def initialize(color = nil, ply = 4)
     @board = Board.new
     @to_move = "white"
     @player_color = color == '1' ? "white" : "black"
-    @engine = color ? Engine.new : nil
+    @engine = color ? Engine.new(ply) : nil
   end
 
   def game_loop
     loop do
-      #system("clear")
+      system("clear")
       @board.display_gameboard
       game_over_conditions = game_over(@board, @to_move)
       if game_over_conditions[:game_over]
         puts game_over_conditions[:text]
         break
       end
-      print "Move: "
-      moves = @board.moves.move_list.map { |move| parse_integer(move) }
+      #moves = @board.moves.move_list.map { |move| parse_integer(move) }
       #p moves
       if !@engine || @player_color == @to_move
+        print "Move: "
         move = gets
         move = parse_algebraic(move)
         while !@board.moves.move_list.include?(move)
@@ -111,6 +111,7 @@ class Game
           move = parse_algebraic(move)
         end
       else
+        puts "Lasker is thinking..."
         move = @engine.minimax(@board, @to_move)
       end
       @board.make_move(move, @to_move)

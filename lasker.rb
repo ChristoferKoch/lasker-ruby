@@ -37,7 +37,16 @@ else
     print "\tInvalid input (1 or 2): "
     color = gets.chomp
   end
-  game = Game.new(color)
+  system("clear")
+  print_header
+  print_decorative_board
+  print_ply_select
+  ply = gets.chomp
+  while !'1'..'20'.include?(ply) && ply != ''
+    print "\tInvalid input (1 \u2013 20): "
+    color = gets.chomp
+  end
+  game = ply == '' ? Game.new(color) : Game.new(color, ply.to_i)
 end
 
 game.game_loop

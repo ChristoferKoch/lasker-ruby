@@ -47,15 +47,18 @@ class Engine
     32, 33, 34, 35, 40, 41, 42, 43, 48, 49, 50, 51, 56, 57, 58, 59
   ]
   
-  def initialize
+  def initialize(ply = 4)
     # Initial evaluation is equal to the sum of the
     # values Lasker assigned to the first five moves
     @evaluation = 78
+    @ply = ply
+    @rejected_lines = 0
   end
 
-  # Depth hardcoded to 4 while debugging
-  def minimax(board, to_move, depth = 4)
-    move = to_move == "white" ? alpha_beta_max(board, depth, -10000, 10000) : alpha_beta_min(board, depth, -10000, 10000)
+  def minimax(board, to_move)
+    move = to_move == "white" ? alpha_beta_max(board, @ply, -10000, 10000) :
+             alpha_beta_min(board, @ply, -10000, 10000)
+    @rejected_lines = 0
     return move[1]
   end
 
@@ -64,15 +67,16 @@ class Engine
     game_over_conditions = game_over(board, "white")
     return [game_over_conditions[:result], nil] if game_over_conditions[:game_over]
     value = -10000
-    current_move = nil
     move_list = board.moves.generate_moves(
       "white", board.pieces, board.white_occupancy, board.black_occupancy)
+    current_move = move_list[0]
     move_list.each do |move|
-      current_move = move
       board.make_move(move, "white")
       value = [value, alpha_beta_min(board, depth - 1, alpha, beta)[0]].max
       board.unmake_move
+      @rejected_lines += 1 if value > beta
       break if value > beta
+      current_move = move if value > alpha
       alpha = [alpha, value].max
     end
     return [value, current_move]
@@ -83,15 +87,16 @@ class Engine
     game_over_conditions = game_over(board, "black")
     return [game_over_conditions[:result], nil] if game_over_conditions[:game_over]
     value = 10000
-    current_move = nil
     move_list = board.moves.generate_moves(
       "black", board.pieces, board.white_occupancy, board.black_occupancy)
+    current_move = move_list[0]
     move_list.each do |move|
-      current_move = move
       board.make_move(move, "black")
       value = [value, alpha_beta_max(board, depth - 1, alpha, beta)[0]].min
       board.unmake_move
+      @rejected_lines += 1 if value < alpha
       break if value < alpha
+      current_move = move if value < beta
       beta = [beta, value].min
     end
     return [value, current_move]
@@ -110,7 +115,7 @@ class Engine
       when :pawn
         evaluation += pawn_sum(info.bitboard)
       when :bishop
-        evaluation += bishop_sum(info.bitboard, info.token)
+        evaluation += bishop_sum(info.bitboard, info.color)
       when :rook
         evaluation += rook_sum(info.bitboard)
       when :knight
@@ -133,11 +138,11 @@ class Engine
     return sum
   end
 
-  def bishop_sum(bitboard, token)
+  def bishop_sum(bitboard, color)
     sum = 0
     indexes = get_indexes(bitboard)
     indexes.each do |index|
-      if token == "\u2657"
+      if color == "white"
         side = LIGHT_SQUARES.include?(index) ? :king : :queen
       else
         side = LIGHT_SQUARES.include?(index) ? :queen : :king

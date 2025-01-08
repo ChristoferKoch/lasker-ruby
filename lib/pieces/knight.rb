@@ -31,13 +31,10 @@ class Knight < Piece
     indexes.each do |index|
       moveboard = move_mask(1 << index, index)
       pin_check = pinned(same_occupancy | diff_occupancy, opp_pieces, king, index)
-      if !pin_check && king.checkboard == 0
-        if moveboard && king.checkboard > 0
-          moveboard = king.in_check ? 0 : pin_check | moveboard
-        else
-          blockerboard = moveboard & same_occupancy
-          moveboard = moveboard ^ blockerboard
-        end
+      if !pin_check
+        blockerboard = moveboard & same_occupancy
+        moveboard ^= blockerboard
+        moveboard &= king.checkboard if king.in_check
       else
         moveboard = 0
       end

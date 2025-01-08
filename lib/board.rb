@@ -60,7 +60,7 @@ class Board
     @pieces[pieces_index][:king].in_double_check = false
     update_bitboard(piece, move_data, to_move)
     update_capture(capture, move_data, to_move, move_data[:capture]) if capture
-    update_promotion(promotion, move_data) if promotion
+    update_promotion(promotion, move_data, pieces_index) if promotion
     update_occupancy
     move |= 1 << 23 if check?(@pieces[(pieces_index - 1).abs][:king], @pieces[pieces_index])
     @moves.game_moves.push(move)
@@ -156,8 +156,13 @@ class Board
     @piece_counts[index][capture_type] -= 1
   end
 
-  def update_promotion(promotion, move_data)
+  def update_promotion(promotion, move_data, index)
+    @piece_counts[index][move_data[:promotion]] += 1
+    @piece_counts[index][:pawn] -= 1
     promotion.bitboard |= 1 << move_data[:target]
+    @pieces[index][:pawn].bitboard ^= 1 << move_data[:target]
+    promotion.attackboard = promotion.attack_mask
+    @pieces[index][:pawn].attackboard = @pieces[index][:pawn].attack_mask  
   end
 
   def check?(king, opposing_pieces)
@@ -168,7 +173,7 @@ class Board
         indexes = piece.get_indexes
         indexes.each do |index|
           tempboard = count_bits(piece.bitboard) > 1 ?
-                        piece.bitboard & ~(1 << index) : piece.bitboard
+                        piece.bitboard & (1 << index) : piece.bitboard
           if (king.bitboard & piece.attack_mask(tempboard)) != 0
             if piece.is_a?(Pawn) || piece.is_a?(Knight)
               king.checkboard |= 1 << index
